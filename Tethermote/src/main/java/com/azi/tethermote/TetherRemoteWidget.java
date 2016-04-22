@@ -15,10 +15,10 @@ import android.widget.Toast;
  * Implementation of App Widget functionality.
  */
 public class TetherRemoteWidget extends AppWidgetProvider {
-    public static final String SWITCH_ACTION = "com.azi.tethermote.TetherRemoteWidget.SWITCH_ACTION";
-    public static final String SWITCH_STATE = "com.azi.tethermote.TetherRemoteWidget.SWITCH_STATE";
-    public static final String SWITCH_WIDGET_ID = "com.azi.tethermote.TetherRemoteWidget.SWITCH_WIDGET_ID";
-    static final int[] imageIds = new int[]{
+    private static final String SWITCH_ACTION = "com.azi.tethermote.TetherRemoteWidget.SWITCH_ACTION";
+    private static final String SWITCH_STATE = "com.azi.tethermote.TetherRemoteWidget.SWITCH_STATE";
+    private static final String SWITCH_WIDGET_ID = "com.azi.tethermote.TetherRemoteWidget.SWITCH_WIDGET_ID";
+    private static final int[] imageIds = new int[]{
             R.drawable.widget_off_sel,
             R.drawable.widget_on_sel,
             R.drawable.widget_bet
@@ -56,7 +56,7 @@ public class TetherRemoteWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
+        final AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         if (intent.getAction().equals(SWITCH_ACTION)) {
             String address = PreferenceManager.getDefaultSharedPreferences(context)
                     .getString("remote_device", "");
@@ -71,9 +71,9 @@ public class TetherRemoteWidget extends AppWidgetProvider {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        updateAppWidget(context, AppWidgetManager.getInstance(context), widgetId, 2);
-                        int newstate = BluetoothService.sendRemoteTetherState(context, state);
-                        updateAppWidget(context, AppWidgetManager.getInstance(context), widgetId, newstate);
+                        updateAppWidget(context, mgr, widgetId, 2);
+                        int newState = BluetoothService.sendRemoteTetherState(context, state);
+                        updateAppWidget(context, mgr, widgetId, newState);
                     }
                 }).start();
             }

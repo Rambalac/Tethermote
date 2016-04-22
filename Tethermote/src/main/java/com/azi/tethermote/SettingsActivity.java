@@ -5,9 +5,7 @@ import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,10 +15,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -38,13 +32,11 @@ import java.util.Set;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    private static final int WRITE_SETTINGS_REQUEST = 123;
-
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -120,73 +112,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     }
 
-    private void checkPermission(final String permission) {
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this, permission)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-
-                new AlertDialog.Builder(this)
-                        .setTitle("Permission required")
-                        .setMessage("Tethermote requires WRITE_SETTINGS permission to switch tethering on this device. If you don't need tethering on this device you can reject")
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                checkPermission(permission);
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this, new String[]{permission}, WRITE_SETTINGS_REQUEST);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case WRITE_SETTINGS_REQUEST: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -210,7 +135,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
-        private static Preference.OnPreferenceClickListener OnRemoteDevicePreferenceClickListener = new Preference.OnPreferenceClickListener() {
+        private static final Preference.OnPreferenceClickListener OnRemoteDevicePreferenceClickListener = new Preference.OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -219,10 +144,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
         };
 
-        protected static void setListOfDevices(ListPreference lp) {
+        private static void setListOfDevices(ListPreference lp) {
             BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
             if (btAdapter != null) {
-
                 Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
 
                 ArrayList<CharSequence> entriesList = new ArrayList<>();

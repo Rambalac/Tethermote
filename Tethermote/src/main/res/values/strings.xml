@@ -8,16 +8,8 @@
 
     <!-- Example settings for Notifications -->
 
-    <string name="pref_ringtone_silent">Silent</string>
-
     <string name="disable_on_screen_off">Disable tethering on screen off</string>
     <string name="enable_on_screen_on">Enable tethering on screen on</string>
-    <string name="tether_enable_allowed">Add allowed devices</string>
-    <string name="tether_enable_allowed_summary">Add devices allowed to enable tethering on this device</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
-    <string name="title_activity_allowed_devices">Allowed devices</string>
-    <string name="action_settings">Settings</string>
     <string name="remote_device">Remote device</string>
     <string name="enable_tethering">Enable Tethering</string>
 

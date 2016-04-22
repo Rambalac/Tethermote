@@ -27,14 +27,14 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class BluetoothService extends Service {
-    public static final UUID SERVICE_UUID = UUID.fromString("5dc6ece2-3e0d-4425-ac00-e444be6b56cb");
-    static boolean running;
+    private static final UUID SERVICE_UUID = UUID.fromString("5dc6ece2-3e0d-4425-ac00-e444be6b56cb");
+    private static boolean running;
     private final BluetoothAdapter btAdapter;
     private final String appName = "Tethermote";
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Handle reciever
+            // Handle receiver
             String mAction = intent.getAction();
 
             boolean enableOnScreenOn = PreferenceManager.getDefaultSharedPreferences(context)
@@ -54,8 +54,8 @@ public class BluetoothService extends Service {
                 action = 0;
             }
             if (action != -1) {
-                int newstate = sendRemoteTetherState(context, action);
-                updateWidgets(context, newstate);
+                int newState = sendRemoteTetherState(context, action);
+                updateWidgets(context, newState);
             }
         }
     };
@@ -64,7 +64,7 @@ public class BluetoothService extends Service {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
-    public static void showToast(final Context context, final String s, final int length) {
+    private static void showToast(final Context context, final String s, final int length) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
@@ -76,7 +76,7 @@ public class BluetoothService extends Service {
 
     }
 
-    public static void startSocketTimeout(final BluetoothSocket socket, final int time) {
+    private static void startSocketTimeout(final BluetoothSocket socket, final int time) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -112,15 +112,15 @@ public class BluetoothService extends Service {
             startSocketTimeout(clientSocket, 5000);
             clientSocket.connect();
             try {
-                OutputStream outstream = clientSocket.getOutputStream();
-                if (outstream == null) {
+                OutputStream outStream = clientSocket.getOutputStream();
+                if (outStream == null) {
                     return 2;
                 }
-                outstream.write(state);
-                outstream.flush();
+                outStream.write(state);
+                outStream.flush();
 
-                InputStream instream = clientSocket.getInputStream();
-                int result = instream.read();
+                InputStream inStream = clientSocket.getInputStream();
+                int result = inStream.read();
 
                 if (result == 1) {
                     new Thread(new Runnable() {
@@ -157,12 +157,12 @@ public class BluetoothService extends Service {
         return sendRemoteTetherState(context, 2);
     }
 
-    private void updateWidgets(Context context, int newstate) {
+    private void updateWidgets(Context context, int newState) {
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         final int[] appWidgetIds = manager.getAppWidgetIds(new ComponentName(context, TetherRemoteWidget.class));
 
-        for (int i = 0; i < appWidgetIds.length; ++i) {
-            TetherRemoteWidget.updateAppWidget(context, manager, appWidgetIds[i], newstate);
+        for (int appWidgetId : appWidgetIds) {
+            TetherRemoteWidget.updateAppWidget(context, manager, appWidgetId, newState);
         }
     }
 
@@ -191,21 +191,21 @@ public class BluetoothService extends Service {
                                     try {
                                         startSocketTimeout(socket, 5000);
                                         showToast("Got clientSocket " + socket.getRemoteDevice().getName(), Toast.LENGTH_SHORT);
-                                        InputStream instream = socket.getInputStream();
-                                        OutputStream outstream = socket.getOutputStream();
+                                        InputStream inStream = socket.getInputStream();
+                                        OutputStream outStream = socket.getOutputStream();
 
-                                        int b = instream.read();
+                                        int b = inStream.read();
                                         if (b == 0) {
                                             enableTethering(false);
-                                            outstream.write(0);
+                                            outStream.write(0);
                                         } else if (b == 1) {
                                             boolean success = enableTethering(true);
-                                            outstream.write(success ? 1 : 0);
+                                            outStream.write(success ? 1 : 0);
                                         } else if (b == 2) {
                                             boolean state = getTetheringState();
-                                            outstream.write(state ? 1 : 0);
+                                            outStream.write(state ? 1 : 0);
                                         }
-                                        outstream.flush();
+                                        outStream.flush();
 
                                     } finally {
                                         socket.close();

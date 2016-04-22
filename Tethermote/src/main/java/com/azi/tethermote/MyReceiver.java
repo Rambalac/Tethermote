@@ -10,7 +10,10 @@ public class MyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent startServiceIntent = new Intent(context, BluetoothService.class);
-        context.startService(startServiceIntent);
+        String action = intent.getAction();
+        if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+            Intent startServiceIntent = new Intent(context, BluetoothService.class);
+            context.startService(startServiceIntent);
+        }
     }
 }
