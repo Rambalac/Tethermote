@@ -1,13 +1,8 @@
 <resources>
-    <string name="app_name">Tether Remote</string>
-    <!-- Strings related to Settings -->
+    <string name="app_name">Tethermote Settings</string>
 
-    <!-- Example General settings -->
-
-    <!-- Example settings for Data & Sync -->
-
-    <!-- Example settings for Notifications -->
-
+    <string name="enabling">Enabling</string>
+    <string name="disabling">Disabling</string>
     <string name="disable_on_screen_off">Disable tethering on screen off</string>
     <string name="enable_on_screen_on">Enable tethering on screen on</string>
     <string name="remote_device">Remote device</string>

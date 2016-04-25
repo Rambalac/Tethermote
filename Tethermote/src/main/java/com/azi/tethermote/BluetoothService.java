@@ -96,6 +96,10 @@ public class BluetoothService extends Service {
 
     public static int sendRemoteTetherState(final Context context, int state) {
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (btAdapter == null) {
+            return 2;
+        }
+
         btAdapter.cancelDiscovery();
 //        if (!btAdapter.isEnabled()) {
 //            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -168,13 +172,18 @@ public class BluetoothService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (btAdapter == null) {
+            return START_NOT_STICKY;
+        }
         IntentFilter screenStateFilter = new IntentFilter();
         screenStateFilter.addAction(Intent.ACTION_SCREEN_ON);
         screenStateFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mIntentReceiver, screenStateFilter);
 
-        if (running) return START_STICKY;
-        showToast("Started", Toast.LENGTH_SHORT);
+        if (running) {
+            return START_STICKY;
+        }
+
         running = true;
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -190,7 +199,6 @@ public class BluetoothService extends Service {
 
                                     try {
                                         startSocketTimeout(socket, 5000);
-                                        showToast("Got clientSocket " + socket.getRemoteDevice().getName(), Toast.LENGTH_SHORT);
                                         InputStream inStream = socket.getInputStream();
                                         OutputStream outStream = socket.getOutputStream();
 
@@ -235,8 +243,6 @@ public class BluetoothService extends Service {
     }
 
     private boolean getTetheringState() {
-        showToast("Getting state ", Toast.LENGTH_SHORT);
-
         WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         Method[] wmMethods = wifiManager.getClass().getDeclaredMethods();
         for (Method method : wmMethods) {
@@ -253,8 +259,6 @@ public class BluetoothService extends Service {
     }
 
     private boolean enableTethering(boolean enable) {
-        showToast("Enabling " + enable, Toast.LENGTH_SHORT);
-
         WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
 
         Method[] methods = wifiManager.getClass().getDeclaredMethods();

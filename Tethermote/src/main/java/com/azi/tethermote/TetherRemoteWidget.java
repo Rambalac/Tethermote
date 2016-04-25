@@ -48,8 +48,6 @@ public class TetherRemoteWidget extends AppWidgetProvider {
                 // Instruct the widget_off manager to update the widget_off
 
                 appWidgetManager.updateAppWidget(appWidgetId, views);
-
-                Toast.makeText(context, "Current state: " + state, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -68,6 +66,13 @@ public class TetherRemoteWidget extends AppWidgetProvider {
 
                 final int state = intent.getIntExtra(SWITCH_STATE, 0);
                 final int widgetId = intent.getIntExtra(SWITCH_WIDGET_ID, 0);
+
+                if (state == 1) {
+                    Toast.makeText(context, context.getString(R.string.enabling), Toast.LENGTH_SHORT);
+                } else if (state == 0) {
+                    Toast.makeText(context, context.getString(R.string.disabling), Toast.LENGTH_SHORT);
+                }
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
