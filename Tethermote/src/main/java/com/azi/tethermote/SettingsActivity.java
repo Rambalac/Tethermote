@@ -2,6 +2,7 @@ package com.azi.tethermote;
 
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -15,7 +16,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -32,6 +33,7 @@ import java.util.Set;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+    private static final int BLUETOOTH_PAIR_REQUEST_CODE = 123;
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -87,6 +89,39 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 
+    private static void enableBluetooth(Activity context) {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        enableBtIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivityForResult(enableBtIntent, BLUETOOTH_PAIR_REQUEST_CODE);
+    }
+
+    private static void setListOfDevices(Activity act, ListPreference lp) {
+        ArrayList<CharSequence> entriesList = new ArrayList<>();
+        ArrayList<CharSequence> entryValuesList = new ArrayList<>();
+        entriesList.add("None");
+        entryValuesList.add("");
+        entriesList.add("Self");
+        entryValuesList.add(".");
+
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!btAdapter.isEnabled()) {
+            enableBluetooth(act);
+        }
+
+        if (btAdapter != null) {
+            Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+
+            for (BluetoothDevice device : pairedDevices) {
+                entriesList.add(device.getName());
+                entryValuesList.add(device.getAddress());
+            }
+
+        }
+
+        lp.setEntries(entriesList.toArray(new CharSequence[entriesList.size()]));
+        lp.setEntryValues(entryValuesList.toArray(new CharSequence[entryValuesList.size()]));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +129,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         GeneralPreferenceFragment fragment = new GeneralPreferenceFragment();
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction().replace(android.R.id.content,
-                fragment).commit();
+                fragment, "general").commit();
 
         Intent startServiceIntent = new Intent(this, BluetoothService.class);
         getApplicationContext().startService(startServiceIntent);
@@ -109,7 +144,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 startActivity(intent);
             }
         }
-
     }
 
     /**
@@ -129,43 +163,42 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName);
     }
 
+    public void openWifi(View view) {
+        Intent intentOpenBluetoothSettings = new Intent();
+        intentOpenBluetoothSettings.setAction(Settings.ACTION_WIFI_SETTINGS);
+        startActivity(intentOpenBluetoothSettings);
+    }
+
+    public void openBluetooth(View view) {
+        Intent intentOpenBluetoothSettings = new Intent();
+        intentOpenBluetoothSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+        startActivityForResult(intentOpenBluetoothSettings, BLUETOOTH_PAIR_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BLUETOOTH_PAIR_REQUEST_CODE) {
+            PreferenceFragment fragment = (PreferenceFragment) getFragmentManager().findFragmentByTag("general");
+            final ListPreference listPreference = (ListPreference) fragment.findPreference("remote_device");
+            setListOfDevices(this, listPreference);
+        }
+    }
+
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
-        private static final Preference.OnPreferenceClickListener OnRemoteDevicePreferenceClickListener = new Preference.OnPreferenceClickListener() {
+
+        private final Preference.OnPreferenceClickListener OnRemoteDevicePreferenceClickListener = new Preference.OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                setListOfDevices((ListPreference) preference);
+                setListOfDevices(GeneralPreferenceFragment.this.getActivity(), (ListPreference) preference);
                 return true;
             }
         };
-
-        private static void setListOfDevices(ListPreference lp) {
-            BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-            if (btAdapter != null) {
-                Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
-
-                ArrayList<CharSequence> entriesList = new ArrayList<>();
-                ArrayList<CharSequence> entryValuesList = new ArrayList<>();
-                entriesList.add("None");
-                entryValuesList.add("");
-
-                for (BluetoothDevice device : pairedDevices) {
-                    entriesList.add(device.getName());
-                    entryValuesList.add(device.getAddress());
-                }
-
-                lp.setEntries(entriesList.toArray(new CharSequence[pairedDevices.size()]));
-                lp.setEntryValues(entryValuesList.toArray(new CharSequence[pairedDevices.size()]));
-            } else {
-                lp.setEntries(new String[0]);
-                lp.setEntryValues(new String[0]);
-            }
-        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -173,8 +206,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
 
+
             final ListPreference listPreference = (ListPreference) findPreference("remote_device");
-            setListOfDevices(listPreference);
+            setListOfDevices(GeneralPreferenceFragment.this.getActivity(), listPreference);
             listPreference.setOnPreferenceClickListener(OnRemoteDevicePreferenceClickListener);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
@@ -185,16 +219,5 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 //            bindPreferenceSummaryToValue(findPreference("disable_on_screen_off"));
 //            bindPreferenceSummaryToValue(findPreference("enable_on_screen_on"));
         }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-
     }
 }

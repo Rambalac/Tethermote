@@ -17,4 +17,11 @@
         android:defaultValue="false"
         android:key="enable_on_screen_on"
         android:title="@string/enable_on_screen_on" />
+
+    <Preference
+        android:key="pair_bluetooth"
+        android:widgetLayout="@layout/pair_bluetooth" />
+    <Preference
+        android:key="connect_wifi"
+        android:widgetLayout="@layout/connect_wifi" />
 </PreferenceScreen>

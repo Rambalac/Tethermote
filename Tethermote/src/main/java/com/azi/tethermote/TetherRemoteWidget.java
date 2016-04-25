@@ -36,10 +36,10 @@ public class TetherRemoteWidget extends AppWidgetProvider {
 
                 Intent switchIntent = new Intent(context, TetherRemoteWidget.class);
                 switchIntent.setAction(SWITCH_ACTION);
-                switchIntent.putExtra(SWITCH_STATE, state == 0 ? 1 : 0);
+                switchIntent.putExtra(SWITCH_STATE, state == BluetoothService.TETHERING_DISABLED ? BluetoothService.TETHERING_ENABLED : BluetoothService.TETHERING_DISABLED);
                 switchIntent.putExtra(SWITCH_WIDGET_ID, appWidgetId);
 
-                PendingIntent switchPendingIntent = PendingIntent.getBroadcast(context, 0, switchIntent,
+                PendingIntent switchPendingIntent = PendingIntent.getBroadcast(context, BluetoothService.TETHERING_DISABLED, switchIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
                 views.setOnClickPendingIntent(R.id.imageButton, switchPendingIntent);
 
@@ -64,20 +64,20 @@ public class TetherRemoteWidget extends AppWidgetProvider {
                 context.startActivity(settingsIntent);
             } else {
 
-                final int state = intent.getIntExtra(SWITCH_STATE, 0);
+                final int state = intent.getIntExtra(SWITCH_STATE, BluetoothService.TETHERING_DISABLED);
                 final int widgetId = intent.getIntExtra(SWITCH_WIDGET_ID, 0);
 
-                if (state == 1) {
-                    Toast.makeText(context, context.getString(R.string.enabling), Toast.LENGTH_SHORT);
-                } else if (state == 0) {
-                    Toast.makeText(context, context.getString(R.string.disabling), Toast.LENGTH_SHORT);
+                if (state == BluetoothService.TETHERING_ENABLED) {
+                    Toast.makeText(context, context.getString(R.string.enabling), Toast.LENGTH_SHORT).show();
+                } else if (state == BluetoothService.TETHERING_DISABLED) {
+                    Toast.makeText(context, context.getString(R.string.disabling), Toast.LENGTH_SHORT).show();
                 }
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        updateAppWidget(context, mgr, widgetId, 2);
-                        int newState = BluetoothService.sendRemoteTetherState(context, state);
+                        updateAppWidget(context, mgr, widgetId, BluetoothService.TETHERING_STATE);
+                        int newState = BluetoothService.EnableRemoteTethering(context, state == BluetoothService.TETHERING_ENABLED ? true : false);
                         updateAppWidget(context, mgr, widgetId, newState);
                     }
                 }).start();
@@ -90,13 +90,12 @@ public class TetherRemoteWidget extends AppWidgetProvider {
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId, 2);
+            updateAppWidget(context, appWidgetManager, appWidgetId, BluetoothService.TETHERING_STATE);
         }
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 int state = BluetoothService.getRemoteTetherState(context);
                 // There may be multiple widgets active, so update all of them
                 for (int appWidgetId : appWidgetIds) {

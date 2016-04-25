@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tethermote Settings</string>
+    <string name="app_name">Tethermote</string>
 
     <string name="enabling">Enabling</string>
     <string name="disabling">Disabling</string>
@@ -7,7 +7,9 @@
     <string name="enable_on_screen_on">Enable tethering on screen on</string>
     <string name="remote_device">Remote device</string>
     <string name="enable_tethering">Enable Tethering</string>
-
-    <!-- Strings related to Settings -->
-
+    <string name="connect_to_wifi">Connect to WiFi</string>
+    <string name="pair_bluetooth">Pair new Bluetooth devices</string>
+    <string name="bluetooth_device_not_found">Bluetooth device not found</string>
+    <string name="bluetooth_device_not_accessible">Bluetooth device not accessible\r\n</string>
+    <string name="settings_name">Tethermote Settings</string>
 </resources>
