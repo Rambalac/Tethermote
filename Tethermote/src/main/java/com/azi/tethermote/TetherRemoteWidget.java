@@ -77,7 +77,7 @@ public class TetherRemoteWidget extends AppWidgetProvider {
                     @Override
                     public void run() {
                         updateAppWidget(context, mgr, widgetId, BluetoothService.TETHERING_STATE);
-                        int newState = BluetoothService.EnableRemoteTethering(context, state == BluetoothService.TETHERING_ENABLED ? true : false);
+                        int newState = BluetoothService.EnableRemoteTethering(context, state == BluetoothService.TETHERING_ENABLED);
                         updateAppWidget(context, mgr, widgetId, newState);
                     }
                 }).start();

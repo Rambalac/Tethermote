@@ -32,7 +32,6 @@ public class BluetoothService extends Service {
     public final static int TETHERING_STATE = 2;
 
     private static final UUID SERVICE_UUID = UUID.fromString("5dc6ece2-3e0d-4425-ac00-e444be6b56cb");
-    private static final int REQUEST_ENABLE_BT = 123;
     private static boolean running;
     private static Thread mainThread;
     private final BluetoothAdapter btAdapter;

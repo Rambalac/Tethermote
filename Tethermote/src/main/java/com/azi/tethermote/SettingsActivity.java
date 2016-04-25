@@ -104,11 +104,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         entryValuesList.add(".");
 
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!btAdapter.isEnabled()) {
-            enableBluetooth(act);
-        }
-
         if (btAdapter != null) {
+            if (!btAdapter.isEnabled()) {
+                enableBluetooth(act);
+            }
+
             Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
 
             for (BluetoothDevice device : pairedDevices) {
