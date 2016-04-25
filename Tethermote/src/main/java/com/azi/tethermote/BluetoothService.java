@@ -34,6 +34,7 @@ public class BluetoothService extends Service {
     private static final UUID SERVICE_UUID = UUID.fromString("5dc6ece2-3e0d-4425-ac00-e444be6b56cb");
     private static final int REQUEST_ENABLE_BT = 123;
     private static boolean running;
+    private static Thread mainThread;
     private final BluetoothAdapter btAdapter;
     private final String appName = "Tethermote";
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
@@ -257,12 +258,12 @@ public class BluetoothService extends Service {
         screenStateFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mIntentReceiver, screenStateFilter);
 
-        if (running) {
+        if (running && mainThread != null && mainThread.isAlive()) {
             return START_STICKY;
         }
 
         running = true;
-        Thread thread = new Thread(new Runnable() {
+        mainThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -319,7 +320,7 @@ public class BluetoothService extends Service {
                 }
             }
         });
-        thread.start();
+        mainThread.start();
 
         return START_STICKY;
     }
