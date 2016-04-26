@@ -9,7 +9,11 @@
     <string name="enable_tethering">Enable Tethering</string>
     <string name="connect_to_wifi">Connect to WiFi</string>
     <string name="pair_bluetooth">Pair new Bluetooth devices</string>
-    <string name="bluetooth_device_not_found">Bluetooth device not found</string>
-    <string name="bluetooth_device_not_accessible">Bluetooth device not accessible\r\n</string>
+    <string name="bluetooth_device_not_found">Bluetooth device is not found</string>
+    <string name="bluetooth_device_not_accessible">Bluetooth device is not accessible\r\n</string>
     <string name="settings_name">Tethermote Settings</string>
+    <string name="need_write_settings">Tethermote requires Write Settings permission to control WiFi tethering. Please enabled it on system settings screen.</string>
+    <string name="open_system_settings">Open System Settings</string>
+    <string name="remote_tethering_enabling">Enabling tethering for remote device\r\n</string>
+    <string name="remote_tethering_disabling">Disabling tethering for remote device\r\n</string>
 </resources>
