@@ -30,7 +30,7 @@ public class StateReceiver extends BroadcastReceiver {
             android.net.wifi.WifiManager m = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             android.net.wifi.SupplicantState s = m.getConnectionInfo().getSupplicantState();
             NetworkInfo.DetailedState state = WifiInfo.getDetailedStateOf(s);
-            if (state == NetworkInfo.DetailedState.CONNECTED) {
+            if (state != NetworkInfo.DetailedState.CONNECTED) {
                 int result = WirelessTools.enableRemoteTethering(context, true);
                 TetherRemoteWidget.updateWidgets(context, result);
             }

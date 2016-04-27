@@ -35,6 +35,7 @@ public class BluetoothService extends Service {
             mainThread.cancel();
         }
         mainThread = new BluetoothThread(this);
+        mainThread.setName("BluetoothServer");
         mainThread.start();
     }
 
@@ -55,10 +56,6 @@ public class BluetoothService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    private void showToast(final String s, final int length) {
-        WirelessTools.showToast(getApplicationContext(), s, length);
     }
 
     public void onThreadStopped() {

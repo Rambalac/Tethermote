@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -25,6 +26,13 @@ class BluetoothThread extends Thread {
         try {
             if (btAdapter == null || !btAdapter.isEnabled()) {
                 return;
+            }
+            if (myServerSocket != null) {
+                try {
+                    myServerSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             myServerSocket = btAdapter
                     .listenUsingRfcommWithServiceRecord(appName, WirelessTools.SERVICE_UUID);
@@ -54,6 +62,7 @@ class BluetoothThread extends Thread {
                 } catch (Exception e) {
                     //WirelessTools.showToast(context, "Error " + e.getMessage(), Toast.LENGTH_SHORT);
                     e.printStackTrace();
+                    sendException(e);
                 } finally {
                     socket.close();
                 }
@@ -65,11 +74,16 @@ class BluetoothThread extends Thread {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            sendException(e);
         } finally {
             //WirelessTools.showToast(context, "Service stopping", Toast.LENGTH_LONG);
             context.onThreadStopped();
         }
 
+    }
+
+    private void sendException(Exception e) {
+        ((TethermoteApp) context.getApplication()).sendException(e);
     }
 
     public void cancel() {

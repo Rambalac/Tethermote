@@ -24,15 +24,30 @@ class WirelessTools {
     public final static int TETHERING_ENABLED = 1;
     public final static int TETHERING_STATE = 2;
 
-    public static int enableRemoteTethering(Context context, boolean enable) {
+    public static int enableRemoteTethering(final Context context, boolean enable) {
         String address = getAddress(context);
         int result;
         if (address.isEmpty()) {
             result = TETHERING_STATE;
         } else if (address.equals(".")) {
-            result = enableLocalTethering(context, enable) ? TETHERING_ENABLED : TETHERING_DISABLED;
+            result = (enableLocalTethering(context, enable) && enable) ? TETHERING_ENABLED : TETHERING_DISABLED;
         } else {
             result = sendRemoteTetherState(context, address, enable ? TETHERING_ENABLED : TETHERING_DISABLED);
+            if (result == TETHERING_ENABLED) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < 5; i++) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            WiFiRescan(context);
+                        }
+                    }
+                }).start();
+            }
         }
         return result;
     }
@@ -105,33 +120,19 @@ class WirelessTools {
                 outStream.flush();
 
                 InputStream inStream = clientSocket.getInputStream();
-                int result = inStream.read();
 
-                if (result == TETHERING_ENABLED) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (int i = 0; i < 5; i++) {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                WiFiRescan(context);
-                            }
-                        }
-                    }).start();
-                }
-                return result;
+                return inStream.read();
             } finally {
                 clientSocket.close();
             }
         } catch (IOException ex) {
             showToast(context, context.getString(R.string.bluetooth_device_not_accessible) + deviceName, Toast.LENGTH_LONG);
+            ((TethermoteApp) context.getApplicationContext()).sendException(ex);
             ex.printStackTrace();
             return TETHERING_STATE;
         } catch (Exception e) {
             showToast(context, "Send failed: " + e.getMessage(), Toast.LENGTH_LONG);
+            ((TethermoteApp) context.getApplicationContext()).sendException(e);
             e.printStackTrace();
             return TETHERING_STATE;
         }
@@ -175,6 +176,7 @@ class WirelessTools {
                     return true;
                 } catch (Exception e) {
                     showToast(context, "enableLocalTethering Error " + e.getMessage(), Toast.LENGTH_SHORT);
+                    ((TethermoteApp) context.getApplicationContext()).sendException(e);
                     e.printStackTrace();
                 }
             }
@@ -191,6 +193,7 @@ class WirelessTools {
                     return (boolean) method.invoke(wifiManager);
                 } catch (Exception e) {
                     showToast(context, "geteLocalTetheringState Error " + e.getMessage(), Toast.LENGTH_SHORT);
+                    ((TethermoteApp) context.getApplicationContext()).sendException(e);
                     e.printStackTrace();
                 }
             }
