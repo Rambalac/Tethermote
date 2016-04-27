@@ -16,4 +16,12 @@
     <string name="open_system_settings">Open System Settings</string>
     <string name="remote_tethering_enabling">Enabling tethering for remote device\r\n</string>
     <string name="remote_tethering_disabling">Disabling tethering for remote device\r\n</string>
+
+    <!-- TODO: remove this placeholder text -->
+    <string name="tether_enable_notification">Tap to enable tethering remotely.</string>
+
+    <string name="action_share">Share</string>
+    <string name="action_reply">Reply</string>
+    <string name="tether_disable_notification">Tap to disable tethering remotely.</string>
+    <string name="show_ongoing_notification">Show ongoing switch notification</string>
 </resources>

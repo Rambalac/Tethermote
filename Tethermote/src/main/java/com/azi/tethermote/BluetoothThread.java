@@ -54,7 +54,7 @@ class BluetoothThread extends Thread {
                         boolean success = WirelessTools.enableLocalTethering(context, true);
                         outStream.write(success ? WirelessTools.TETHERING_ENABLED : WirelessTools.TETHERING_DISABLED);
                     } else if (b == WirelessTools.TETHERING_STATE) {
-                        boolean state = WirelessTools.geteLocalTetheringState(context);
+                        boolean state = WirelessTools.getLocalTetheringState(context);
                         outStream.write(state ? WirelessTools.TETHERING_ENABLED : WirelessTools.TETHERING_DISABLED);
                     }
                     outStream.flush();

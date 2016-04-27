@@ -16,9 +16,9 @@ import android.widget.Toast;
  * Implementation of App Widget functionality.
  */
 public class TetherRemoteWidget extends AppWidgetProvider {
-    private static final String SWITCH_ACTION = "com.azi.tethermote.TetherRemoteWidget.SWITCH_ACTION";
-    private static final String SWITCH_STATE = "com.azi.tethermote.TetherRemoteWidget.SWITCH_STATE";
-    private static final String SWITCH_WIDGET_ID = "com.azi.tethermote.TetherRemoteWidget.SWITCH_WIDGET_ID";
+    public static final String SWITCH_ACTION = "com.azi.tethermote.TetherRemoteWidget.SWITCH_ACTION";
+    public static final String SWITCH_STATE = "com.azi.tethermote.TetherRemoteWidget.SWITCH_STATE";
+    //private static final String SWITCH_WIDGET_ID = "com.azi.tethermote.TetherRemoteWidget.SWITCH_WIDGET_ID";
     private static final int[] imageIds = new int[]{
             R.drawable.widget_off_sel,
             R.drawable.widget_on_sel,
@@ -38,9 +38,8 @@ public class TetherRemoteWidget extends AppWidgetProvider {
                 Intent switchIntent = new Intent(context, TetherRemoteWidget.class);
                 switchIntent.setAction(SWITCH_ACTION);
                 switchIntent.putExtra(SWITCH_STATE, state == WirelessTools.TETHERING_DISABLED ? WirelessTools.TETHERING_ENABLED : WirelessTools.TETHERING_DISABLED);
-                switchIntent.putExtra(SWITCH_WIDGET_ID, appWidgetId);
 
-                PendingIntent switchPendingIntent = PendingIntent.getBroadcast(context, WirelessTools.TETHERING_DISABLED, switchIntent,
+                PendingIntent switchPendingIntent = PendingIntent.getBroadcast(context, 0, switchIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
                 views.setOnClickPendingIntent(R.id.imageButton, switchPendingIntent);
 
@@ -60,6 +59,8 @@ public class TetherRemoteWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             TetherRemoteWidget.updateAppWidget(context, manager, appWidgetId, newState);
         }
+
+        SwitchNotification.Check(context, newState != WirelessTools.TETHERING_ENABLED);
     }
 
     @Override
@@ -75,7 +76,6 @@ public class TetherRemoteWidget extends AppWidgetProvider {
             } else {
 
                 final int state = intent.getIntExtra(SWITCH_STATE, WirelessTools.TETHERING_DISABLED);
-                final int widgetId = intent.getIntExtra(SWITCH_WIDGET_ID, 0);
 
                 if (state == WirelessTools.TETHERING_ENABLED) {
                     Toast.makeText(context, context.getString(R.string.enabling), Toast.LENGTH_SHORT).show();
@@ -86,9 +86,9 @@ public class TetherRemoteWidget extends AppWidgetProvider {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        updateAppWidget(context, mgr, widgetId, WirelessTools.TETHERING_STATE);
+                        updateWidgets(context, WirelessTools.TETHERING_STATE);
                         int newState = WirelessTools.enableRemoteTethering(context, state == WirelessTools.TETHERING_ENABLED);
-                        updateAppWidget(context, mgr, widgetId, newState);
+                        updateWidgets(context, newState);
                     }
                 }).start();
             }

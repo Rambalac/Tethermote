@@ -5,7 +5,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 public class BluetoothService extends Service {
@@ -14,6 +16,12 @@ public class BluetoothService extends Service {
     private static BluetoothThread mainThread;
 
     private final BroadcastReceiver mIntentReceiver;
+    private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferecesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            SwitchNotification.Check(BluetoothService.this, WirelessTools.getRemoteTetherState(BluetoothService.this) != WirelessTools.TETHERING_ENABLED);
+        }
+    };
 
     public BluetoothService() {
         mIntentReceiver = new StateReceiver(this);
@@ -26,6 +34,10 @@ public class BluetoothService extends Service {
         stateFilter.addAction(Intent.ACTION_SCREEN_OFF);
         stateFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mIntentReceiver, stateFilter);
+
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(sharedPreferecesListener);
+
+        SwitchNotification.Check(this, WirelessTools.getRemoteTetherState(this) != 1);
 
         startThread();
     }

@@ -18,6 +18,11 @@
         android:key="enable_on_screen_on"
         android:title="@string/enable_on_screen_on" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="show_switch_notification"
+        android:title="@string/show_ongoing_notification" />
+
     <Preference
         android:key="pair_bluetooth"
         android:widgetLayout="@layout/pair_bluetooth" />

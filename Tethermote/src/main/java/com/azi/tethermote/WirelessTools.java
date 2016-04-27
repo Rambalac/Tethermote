@@ -49,6 +49,9 @@ class WirelessTools {
                 }).start();
             }
         }
+
+        SwitchNotification.Check(context, result != TETHERING_ENABLED);
+
         return result;
     }
 
@@ -159,7 +162,7 @@ class WirelessTools {
         if (address.isEmpty()) {
             return TETHERING_STATE;
         } else if (address.equals(".")) {
-            return geteLocalTetheringState(context) ? TETHERING_ENABLED : TETHERING_DISABLED;
+            return getLocalTetheringState(context) ? TETHERING_ENABLED : TETHERING_DISABLED;
         }
 
         return sendRemoteTetherState(context, address, TETHERING_STATE);
@@ -184,7 +187,7 @@ class WirelessTools {
         return false;
     }
 
-    public static boolean geteLocalTetheringState(Context context) {
+    public static boolean getLocalTetheringState(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         Method[] wmMethods = wifiManager.getClass().getDeclaredMethods();
         for (Method method : wmMethods) {
@@ -192,7 +195,7 @@ class WirelessTools {
                 try {
                     return (boolean) method.invoke(wifiManager);
                 } catch (Exception e) {
-                    showToast(context, "geteLocalTetheringState Error " + e.getMessage(), Toast.LENGTH_SHORT);
+                    showToast(context, "getLocalTetheringState Error " + e.getMessage(), Toast.LENGTH_SHORT);
                     ((TethermoteApp) context.getApplicationContext()).sendException(e);
                     e.printStackTrace();
                 }
