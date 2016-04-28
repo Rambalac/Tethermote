@@ -11,15 +11,18 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 public class BluetoothService extends Service {
-    public static final String Name = "com.azi.tethermote.BLUETOOTH_SERVICE";
-    private static boolean running;
     private static BluetoothThread mainThread;
 
     private final BroadcastReceiver mIntentReceiver;
-    private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferecesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferecesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            SwitchNotification.Check(BluetoothService.this);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SwitchNotification.Check(BluetoothService.this);
+                }
+            }).start();
         }
     };
 

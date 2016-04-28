@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Tethermote</string>
-    <string name="bluetooth_device_not_accessible">Bluetoothデバイスを届けません\r\n%1$s</string>
+    <string name="bluetooth_device_not_accessible">Bluetoothデバイスに届けない\r\n%1$s</string>
     <string name="bluetooth_device_not_accessible_notification">デバイスは遠すぎるかBluetoothは消しているか</string>
     <string name="remote_device">リモートデバイス</string>
     <string name="pair_bluetooth">Bluetoothデバイスのペア</string>
     <string name="open_system_settings">システム設定を開く</string>
-    <string name="enabling">付けている</string>
+    <string name="enabling">つけている</string>
     <string name="disabling">消している</string>
+    <string name="enable_tethering">テザリングをつける</string>
+    <string name="enable_on_screen_on">画面をつけたらテザリングもつける</string>
+    <string name="disable_on_screen_off">画面を消したらテザリングも消す</string>
+    <string name="connect_to_wifi">WiFiの接続</string>
+    <string name="bluetooth_error">Bluetoothエラー</string>
+    <string name="bluetooth_device_not_found">Bluetoothデバイスは見つからない</string>
+    <string name="need_write_settings">テザリモトはテザリングを切り換えるためにシステム設定の書き込みの許可が必要です。システム設定の画面で許可のスウィッチを入れて下さい。</string>
+    <string name="remote_tethering_disabling">リモートデバイスのためにテザリングを消している\r\n%1$s</string>
+    <string name="remote_tethering_enabling">リモートデバイスのためにテザリングをつけている\r\n%1$s</string>
+    <string name="settings_name">テザリモト設定</string>
+    <string name="show_ongoing_notification">通知センターにスウィッチを見せる</string>
+    <string name="tether_disable_notification">リモートテザリングを消すためにここにタッチ</string>
+    <string name="tether_enable_notification">リモートテザリングをつけるためにここにタッチ</string>
 </resources>

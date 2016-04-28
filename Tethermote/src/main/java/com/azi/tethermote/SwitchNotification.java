@@ -20,18 +20,20 @@ import android.support.v4.app.NotificationCompat;
  * This class makes heavy use of the {@link NotificationCompat.Builder} helper
  * class to create notifications in a backward-compatible way.
  */
-public class SwitchNotification {
+class SwitchNotification {
     /**
      * The unique identifier for this type of notification.
      */
     private static final String NOTIFICATION_TAG = "TetheringSwitchNotification";
 
     public static void Check(Context context) {
+        boolean toEnable = true;
         try {
-            Check(context, WirelessTools.getRemoteTetherState(context) != WirelessTools.TETHERING_ENABLED);
+            toEnable = WirelessTools.getRemoteTetherState(context) != WirelessTools.TETHERING_ENABLED;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Check(context, toEnable);
     }
 
     public static void Check(Context context, boolean toEnable) {
@@ -65,7 +67,7 @@ public class SwitchNotification {
      *
      * @see #cancel(Context)
      */
-    public static void notify(final Context context, boolean forEnable) {
+    private static void notify(final Context context, boolean forEnable) {
         final Resources res = context.getResources();
 
         // This image is used as the notification's large icon (thumbnail).
@@ -139,7 +141,7 @@ public class SwitchNotification {
      * {@link #notify(Context, boolean)}.
      */
     @TargetApi(Build.VERSION_CODES.ECLAIR)
-    public static void cancel(final Context context) {
+    private static void cancel(final Context context) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {

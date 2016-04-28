@@ -65,7 +65,6 @@ public class TetherRemoteWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        final AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         if (intent.getAction().equals(SWITCH_ACTION)) {
             String address = PreferenceManager.getDefaultSharedPreferences(context)
                     .getString("remote_device", "");

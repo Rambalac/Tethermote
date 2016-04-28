@@ -1,6 +1,7 @@
 package com.azi.tethermote;
 
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -148,7 +149,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         .setPositiveButton(R.string.open_system_settings, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:com.azi.tethermote"));
+                                @SuppressLint("InlinedApi") Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:com.azi.tethermote"));
                                 startActivity(intent);
                             }
                         }).show();

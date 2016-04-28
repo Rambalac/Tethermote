@@ -29,8 +29,7 @@
         <service
             android:name=".BluetoothService"
             android:enabled="true"
-            android:exported="false"
-            android:process=":BluetoothService">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.azi.tethermote.BLUETOOTH_SERVICE" />
             </intent-filter>

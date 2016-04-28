@@ -55,10 +55,6 @@ class WirelessTools {
         return result;
     }
 
-    public static void showToast(final Context context, final int s, final int length) {
-        showToast(context, context.getString(s), length);
-    }
-
     public static void showToast(final Context context, final String s, final int length) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
