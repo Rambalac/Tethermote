@@ -10,18 +10,18 @@
     <string name="connect_to_wifi">Connect to WiFi</string>
     <string name="pair_bluetooth">Pair new Bluetooth devices</string>
     <string name="bluetooth_device_not_found">Bluetooth device is not found</string>
-    <string name="bluetooth_device_not_accessible">Bluetooth device is not accessible\r\n</string>
     <string name="settings_name">Tethermote Settings</string>
     <string name="need_write_settings">Tethermote requires Write Settings permission to control WiFi tethering. Please enabled it on system settings screen.</string>
     <string name="open_system_settings">Open System Settings</string>
-    <string name="remote_tethering_enabling">Enabling tethering for remote device\r\n</string>
-    <string name="remote_tethering_disabling">Disabling tethering for remote device\r\n</string>
 
-    <!-- TODO: remove this placeholder text -->
+    <string name="bluetooth_device_not_accessible_notification">Device can be too far for Bluetooth or its Bluetooth is disabled or device is turned off.\r\nIf device is near by but still does not work try to run Tethermote Settings on that device again</string>
+    <string name="bluetooth_device_not_accessible">Bluetooth device is not accessible\r\n%1$s</string>
+    <string name="remote_tethering_enabling">Enabling tethering for remote device\r\n%1$s</string>
+    <string name="remote_tethering_disabling">Disabling tethering for remote device\r\n%1$s</string>
+
     <string name="tether_enable_notification">Tap to enable tethering remotely.</string>
 
-    <string name="action_share">Share</string>
-    <string name="action_reply">Reply</string>
     <string name="tether_disable_notification">Tap to disable tethering remotely.</string>
     <string name="show_ongoing_notification">Show ongoing switch notification</string>
+    <string name="bluetooth_error">Bluetooth error</string>
 </resources>

@@ -19,7 +19,7 @@ public class BluetoothService extends Service {
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferecesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            SwitchNotification.Check(BluetoothService.this, WirelessTools.getRemoteTetherState(BluetoothService.this) != WirelessTools.TETHERING_ENABLED);
+            SwitchNotification.Check(BluetoothService.this);
         }
     };
 
@@ -37,7 +37,7 @@ public class BluetoothService extends Service {
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(sharedPreferecesListener);
 
-        SwitchNotification.Check(this, WirelessTools.getRemoteTetherState(this) != 1);
+        SwitchNotification.Check(this);
 
         startThread();
     }

@@ -104,11 +104,12 @@ class WirelessTools {
             return TETHERING_STATE;
         }
         String deviceName = device.getName();
-
+        String deviceErrorMessage = context.getString(R.string.bluetooth_device_not_accessible, deviceName);
         try {
             BluetoothSocket clientSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
             if (clientSocket == null) {
-                showToast(context, context.getString(R.string.bluetooth_device_not_accessible) + deviceName, Toast.LENGTH_LONG);
+                showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
+                SwitchErrorNotification.notify(context, deviceName);
                 return TETHERING_STATE;
             }
             startSocketTimeout(clientSocket, 5000);
@@ -116,7 +117,8 @@ class WirelessTools {
             try {
                 OutputStream outStream = clientSocket.getOutputStream();
                 if (outStream == null) {
-                    showToast(context, context.getString(R.string.bluetooth_device_not_accessible) + deviceName, Toast.LENGTH_LONG);
+                    showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
+                    SwitchErrorNotification.notify(context, deviceName);
                     return TETHERING_STATE;
                 }
                 outStream.write(state);
@@ -129,7 +131,8 @@ class WirelessTools {
                 clientSocket.close();
             }
         } catch (IOException ex) {
-            showToast(context, context.getString(R.string.bluetooth_device_not_accessible) + deviceName, Toast.LENGTH_LONG);
+            showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
+            SwitchErrorNotification.notify(context, deviceName);
             ((TethermoteApp) context.getApplicationContext()).sendException(ex);
             ex.printStackTrace();
             return TETHERING_STATE;

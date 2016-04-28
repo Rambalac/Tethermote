@@ -46,11 +46,11 @@ class BluetoothThread extends Thread {
 
                     int b = inStream.read();
                     if (b == WirelessTools.TETHERING_DISABLED) {
-                        WirelessTools.showToast(context, context.getString(R.string.remote_tethering_disabling) + deviceName, Toast.LENGTH_SHORT);
+                        WirelessTools.showToast(context, context.getString(R.string.remote_tethering_disabling, deviceName), Toast.LENGTH_SHORT);
                         WirelessTools.enableLocalTethering(context, false);
                         outStream.write(WirelessTools.TETHERING_DISABLED);
                     } else if (b == WirelessTools.TETHERING_ENABLED) {
-                        WirelessTools.showToast(context, context.getString(R.string.remote_tethering_enabling) + deviceName, Toast.LENGTH_SHORT);
+                        WirelessTools.showToast(context, context.getString(R.string.remote_tethering_enabling, deviceName), Toast.LENGTH_SHORT);
                         boolean success = WirelessTools.enableLocalTethering(context, true);
                         outStream.write(success ? WirelessTools.TETHERING_ENABLED : WirelessTools.TETHERING_DISABLED);
                     } else if (b == WirelessTools.TETHERING_STATE) {

@@ -26,15 +26,26 @@ public class SwitchNotification {
      */
     private static final String NOTIFICATION_TAG = "TetheringSwitchNotification";
 
+    public static void Check(Context context) {
+        try {
+            Check(context, WirelessTools.getRemoteTetherState(context) != WirelessTools.TETHERING_ENABLED);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void Check(Context context, boolean toEnable) {
-        boolean enabled = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean("show_switch_notification", false);
+        try {
+            boolean enabled = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean("show_switch_notification", false);
 
-        if (enabled) {
-            SwitchNotification.notify(context, toEnable);
-        } else {
-            SwitchNotification.cancel(context);
+            if (enabled) {
+                SwitchNotification.notify(context, toEnable);
+            } else {
+                SwitchNotification.cancel(context);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

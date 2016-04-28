@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tethermote</string>
+    <string name="bluetooth_device_not_accessible">Bluetooth устройство недоступно\r\n%1$s</string>
+    <string name="bluetooth_device_not_accessible_notification">Возможно устройство или слишком далеко, или его Bluetooth отключен, или само устройство выключено. Если устройство всё таки рядом и работает, попробуйте запустить Настройки ещё раз.</string>
+    <string name="bluetooth_device_not_found">Bluetooth устройство не найдено.</string>
+    <string name="bluetooth_error">Ошибка Bluetooth</string>
+    <string name="connect_to_wifi">Подключение по WiFi</string>
+    <string name="disable_on_screen_off">Выключить тетеринг при выключении экрана</string>
+    <string name="enable_on_screen_on">Включить тетеринг при включении экрана</string>
+    <string name="disabling">Отключение</string>
+    <string name="enable_tethering">Включить тетеринг</string>
+    <string name="enabling">Включение</string>
+    <string name="need_write_settings">Приложение Tethermote требует разрешение на Записть Настроек чтобы управлять тетерингом. Пожалуйста, разрешите его в Системных Настройках.</string>
+    <string name="open_system_settings">Открыть Системные Настройки</string>
+    <string name="pair_bluetooth">Спарить устройства Bluetooth</string>
+    <string name="remote_device">Управляемое устройство</string>
+    <string name="remote_tethering_disabling">Тетеринг был выключен с другого устройства\r\n%1$s</string>
+    <string name="remote_tethering_enabling">Тетеринг был включен с другого устройства\r\n%1$s</string>
+    <string name="settings_name">Настройки Tethermote</string>
+    <string name="show_ongoing_notification">Показывать уведомление для переключения.</string>
+    <string name="tether_disable_notification">Нажмите чтобы включить тетеринг удалённо.</string>
+    <string name="tether_enable_notification">Нажмите чтобы выключить тетеринг удалённо.</string>
+</resources>
