@@ -12,7 +12,7 @@
     <application
         android:name=".TethermoteApp"
         android:allowBackup="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/widget_on"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
