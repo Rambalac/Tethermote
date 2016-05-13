@@ -20,6 +20,7 @@ import java.util.UUID;
 class WirelessTools {
     public static final UUID SERVICE_UUID = UUID.fromString("5dc6ece2-3e0d-4425-ac00-e444be6b56cb");
 
+    public final static int TETHERING_ERROR = -1;
     public final static int TETHERING_DISABLED = 0;
     public final static int TETHERING_ENABLED = 1;
     public final static int TETHERING_STATE = 2;
@@ -86,7 +87,7 @@ class WirelessTools {
     private static int sendRemoteTetherState(final Context context, String address, int state) {
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (btAdapter == null) {
-            return TETHERING_STATE;
+            return TETHERING_ERROR;
         }
         if (!btAdapter.isEnabled()) {
             enableBluetooth(context);
@@ -97,7 +98,7 @@ class WirelessTools {
         BluetoothDevice device = btAdapter.getRemoteDevice(address);
         if (device == null) {
             showToast(context, context.getString(R.string.bluetooth_device_not_found), Toast.LENGTH_LONG);
-            return TETHERING_STATE;
+            return TETHERING_ERROR;
         }
         String deviceName = device.getName();
         String deviceErrorMessage = context.getString(R.string.bluetooth_device_not_accessible, deviceName);
@@ -105,8 +106,7 @@ class WirelessTools {
             BluetoothSocket clientSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
             if (clientSocket == null) {
                 showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
-                SwitchErrorNotification.notify(context, deviceName);
-                return TETHERING_STATE;
+                return TETHERING_ERROR;
             }
             startSocketTimeout(clientSocket, 5000);
             clientSocket.connect();
@@ -114,8 +114,7 @@ class WirelessTools {
                 OutputStream outStream = clientSocket.getOutputStream();
                 if (outStream == null) {
                     showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
-                    SwitchErrorNotification.notify(context, deviceName);
-                    return TETHERING_STATE;
+                    return TETHERING_ERROR;
                 }
                 outStream.write(state);
                 outStream.flush();
@@ -128,15 +127,14 @@ class WirelessTools {
             }
         } catch (IOException ex) {
             showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
-            SwitchErrorNotification.notify(context, deviceName);
             ((TethermoteApp) context.getApplicationContext()).sendException(ex);
             ex.printStackTrace();
-            return TETHERING_STATE;
+            return TETHERING_ERROR;
         } catch (Exception e) {
             showToast(context, "Send failed: " + e.getMessage(), Toast.LENGTH_LONG);
             ((TethermoteApp) context.getApplicationContext()).sendException(e);
             e.printStackTrace();
-            return TETHERING_STATE;
+            return TETHERING_ERROR;
         }
     }
 

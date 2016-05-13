@@ -5,10 +5,14 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
+import android.view.WindowManager;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -69,9 +73,7 @@ public class TetherRemoteWidget extends AppWidgetProvider {
             String address = PreferenceManager.getDefaultSharedPreferences(context)
                     .getString("remote_device", "");
             if (address.isEmpty()) {
-                Intent settingsIntent = new Intent(context, SettingsActivity.class);
-                settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(settingsIntent);
+                ShowSettings(context);
             } else {
 
                 final int state = intent.getIntExtra(SWITCH_STATE, WirelessTools.TETHERING_DISABLED);
@@ -82,17 +84,49 @@ public class TetherRemoteWidget extends AppWidgetProvider {
                     Toast.makeText(context, context.getString(R.string.disabling), Toast.LENGTH_SHORT).show();
                 }
 
-                new Thread(new Runnable() {
+                new AsyncTask<Integer, Void, Integer>() {
                     @Override
-                    public void run() {
+                    protected void onPreExecute() {
                         updateWidgets(context, WirelessTools.TETHERING_STATE);
-                        int newState = WirelessTools.enableRemoteTethering(context, state == WirelessTools.TETHERING_ENABLED);
+                    }
+
+                    @Override
+                    protected Integer doInBackground(Integer... params) {
+                        int state = params[0];
+                        return WirelessTools.enableRemoteTethering(context, state == WirelessTools.TETHERING_ENABLED);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Integer newState) {
+                        if (newState == WirelessTools.TETHERING_ERROR) {
+                            newState = WirelessTools.TETHERING_STATE;
+
+                            AlertDialog alert = new AlertDialog.Builder(context, R.style.AlertTheme)
+                                    .setTitle(R.string.bluetooth_device_not_accessible)
+                                    .setMessage(R.string.bluetooth_device_not_accessible_notification)
+                                    .setCancelable(true)
+                                    .setPositiveButton(R.string.settings_name, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            ShowSettings(context);
+                                        }
+                                    })
+                                    .create();
+                            alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                            alert.show();
+                        }
                         updateWidgets(context, newState);
                     }
-                }).start();
+                }.execute(state);
             }
         }
         super.onReceive(context, intent);
+    }
+
+    public void ShowSettings(Context context) {
+        Intent settingsIntent = new Intent(context, SettingsActivity.class);
+        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(settingsIntent);
     }
 
     @Override
@@ -106,6 +140,7 @@ public class TetherRemoteWidget extends AppWidgetProvider {
             @Override
             public void run() {
                 int state = WirelessTools.getRemoteTetherState(context);
+                if (state == WirelessTools.TETHERING_ERROR) state = WirelessTools.TETHERING_STATE;
                 // There may be multiple widgets active, so update all of them
                 for (int appWidgetId : appWidgetIds) {
                     updateAppWidget(context, appWidgetManager, appWidgetId, state);
