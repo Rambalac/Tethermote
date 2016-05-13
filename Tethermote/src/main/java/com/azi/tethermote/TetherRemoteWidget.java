@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -100,17 +99,10 @@ public class TetherRemoteWidget extends AppWidgetProvider {
                     protected void onPostExecute(Integer newState) {
                         if (newState == WirelessTools.TETHERING_ERROR) {
                             newState = WirelessTools.TETHERING_STATE;
-
                             AlertDialog alert = new AlertDialog.Builder(context, R.style.AlertTheme)
-                                    .setTitle(R.string.bluetooth_device_not_accessible)
+                                    .setTitle(R.string.bluetooth_error)
                                     .setMessage(R.string.bluetooth_device_not_accessible_notification)
                                     .setCancelable(true)
-                                    .setPositiveButton(R.string.settings_name, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            ShowSettings(context);
-                                        }
-                                    })
                                     .create();
                             alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
                             alert.show();

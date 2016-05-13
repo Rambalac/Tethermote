@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Tethermote</string>
     <string name="bluetooth_device_not_accessible">Bluetoothデバイスに届けない\r\n%1$s</string>
-    <string name="bluetooth_device_not_accessible_notification">デバイスは遠すぎるかBluetoothは消しているか</string>
+    <string name="bluetooth_device_not_accessible_notification">リモートデバイスはBluetoothが消している, または遠すぎる。それは間違っている場合リモートデバイスのTethermote設定画面をもう一同開いてください。</string>
     <string name="remote_device">リモートデバイス</string>
     <string name="pair_bluetooth">Bluetoothデバイスのペア</string>
     <string name="open_system_settings">システム設定を開く</string>
