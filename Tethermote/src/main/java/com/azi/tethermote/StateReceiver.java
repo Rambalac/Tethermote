@@ -35,10 +35,12 @@ public class StateReceiver extends BroadcastReceiver {
                     NetworkInfo.DetailedState state = WifiInfo.getDetailedStateOf(s);
                     if (state != NetworkInfo.DetailedState.CONNECTED) {
                         int result = WirelessTools.enableRemoteTethering(context, true);
+                        SwitchNotification.Check(context, result != WirelessTools.TETHERING_ENABLED);
                         TetherRemoteWidget.updateWidgets(context, result);
                     }
                 } else if (mAction.equals(Intent.ACTION_SCREEN_OFF) && disableOnScreenOff) {
                     int result = WirelessTools.enableRemoteTethering(context, false);
+                    SwitchNotification.Check(context, result != WirelessTools.TETHERING_ENABLED);
                     TetherRemoteWidget.updateWidgets(context, result);
                 } else if (mAction.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                     final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);

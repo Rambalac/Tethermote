@@ -1,8 +1,13 @@
 package com.azi.tethermote;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.Intent;
+import android.os.SystemClock;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -22,64 +27,70 @@ class BluetoothThread extends Thread {
     @Override
     public void run() {
         //WirelessTools.showToast(context, "Service starting", Toast.LENGTH_LONG);
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        try {
-            if (btAdapter == null || !btAdapter.isEnabled()) {
-                return;
-            }
-            if (myServerSocket != null) {
-                try {
-                    myServerSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+        while (true) {
+            try {
+                BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (btAdapter == null || !btAdapter.isEnabled()) {
+                    return;
                 }
-            }
-            myServerSocket = btAdapter
-                    .listenUsingRfcommWithServiceRecord(appName, WirelessTools.SERVICE_UUID);
-            while (true) {
-                BluetoothSocket socket = myServerSocket.accept();
-                String deviceName = socket.getRemoteDevice().getName();
                 try {
-                    WirelessTools.startSocketTimeout(socket, 5000);
-                    InputStream inStream = socket.getInputStream();
-                    OutputStream outStream = socket.getOutputStream();
-
-                    int b = inStream.read();
-                    if (b == WirelessTools.TETHERING_DISABLED) {
-                        WirelessTools.showToast(context, context.getString(R.string.remote_tethering_disabling, deviceName), Toast.LENGTH_SHORT);
-                        boolean success = WirelessTools.enableLocalTethering(context, false);
-                        outStream.write(success ? WirelessTools.TETHERING_DISABLED : WirelessTools.TETHERING_ERROR);
-                    } else if (b == WirelessTools.TETHERING_ENABLED) {
-                        WirelessTools.showToast(context, context.getString(R.string.remote_tethering_enabling, deviceName), Toast.LENGTH_SHORT);
-                        boolean success = WirelessTools.enableLocalTethering(context, true);
-                        outStream.write(success ? WirelessTools.TETHERING_ENABLED : WirelessTools.TETHERING_ERROR);
-                    } else if (b == WirelessTools.TETHERING_STATE) {
-                        boolean state = WirelessTools.getLocalTetheringState(context);
-                        outStream.write(state ? WirelessTools.TETHERING_ENABLED : WirelessTools.TETHERING_DISABLED);
+                    if (myServerSocket != null) {
+                        try {
+                            myServerSocket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    outStream.flush();
+                    myServerSocket = btAdapter.listenUsingRfcommWithServiceRecord(appName, WirelessTools.SERVICE_UUID);
+                    while (true) {
+                        BluetoothSocket socket = myServerSocket.accept();
+                        String deviceName = socket.getRemoteDevice().getName();
+                        try {
+                            WirelessTools.startSocketTimeout(socket, 5000);
+                            InputStream inStream = socket.getInputStream();
+                            OutputStream outStream = socket.getOutputStream();
 
+                            int b = inStream.read();
+                            if (b == WirelessTools.TETHERING_DISABLED) {
+                                WirelessTools.showToast(context, context.getString(R.string.remote_tethering_disabling, deviceName), Toast.LENGTH_SHORT);
+                                boolean success = WirelessTools.enableLocalTethering(context, false);
+                                outStream.write(success ? WirelessTools.TETHERING_DISABLED : WirelessTools.TETHERING_ERROR);
+                            } else if (b == WirelessTools.TETHERING_ENABLED) {
+                                WirelessTools.showToast(context, context.getString(R.string.remote_tethering_enabling, deviceName), Toast.LENGTH_SHORT);
+                                boolean success = WirelessTools.enableLocalTethering(context, true);
+                                outStream.write(success ? WirelessTools.TETHERING_ENABLED : WirelessTools.TETHERING_ERROR);
+                            } else if (b == WirelessTools.TETHERING_STATE) {
+                                boolean state = WirelessTools.getLocalTetheringState(context);
+                                outStream.write(state ? WirelessTools.TETHERING_ENABLED : WirelessTools.TETHERING_DISABLED);
+                            }
+                            outStream.flush();
+
+                        } catch (Exception e) {
+                            //WirelessTools.showToast(context, "Error " + e.getMessage(), Toast.LENGTH_SHORT);
+                            e.printStackTrace();
+                            sendException(e);
+                        } finally {
+                            socket.close();
+                        }
+                    }
                 } catch (Exception e) {
-                    //WirelessTools.showToast(context, "Error " + e.getMessage(), Toast.LENGTH_SHORT);
                     e.printStackTrace();
+                    try {
+                        myServerSocket.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                     sendException(e);
                 } finally {
-                    socket.close();
+                    //WirelessTools.showToast(context, "Service stopping", Toast.LENGTH_LONG);
+                    context.onThreadStopped();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                sendException(e);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                myServerSocket.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            sendException(e);
-        } finally {
-            //WirelessTools.showToast(context, "Service stopping", Toast.LENGTH_LONG);
-            context.onThreadStopped();
         }
-
     }
 
     private void sendException(Exception e) {

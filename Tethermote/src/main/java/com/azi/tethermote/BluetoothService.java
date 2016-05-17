@@ -32,17 +32,6 @@ public class BluetoothService extends Service {
 
     @Override
     public void onCreate() {
-        IntentFilter stateFilter = new IntentFilter();
-        stateFilter.addAction(Intent.ACTION_SCREEN_ON);
-        stateFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        stateFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(mIntentReceiver, stateFilter);
-
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(sharedPreferecesListener);
-
-        SwitchNotification.Check(this);
-
-        startThread();
     }
 
     public void startThread() {
@@ -56,6 +45,18 @@ public class BluetoothService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        IntentFilter stateFilter = new IntentFilter();
+        stateFilter.addAction(Intent.ACTION_SCREEN_ON);
+        stateFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        stateFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(mIntentReceiver, stateFilter);
+
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(sharedPreferecesListener);
+
+        SwitchNotification.Check(this);
+
+        startThread();
+
         return START_STICKY;
     }
 
