@@ -1,14 +1,20 @@
 package com.azi.tethermote;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -20,7 +26,7 @@ import java.util.UUID;
 class WirelessTools {
     public static final UUID SERVICE_UUID = UUID.fromString("5dc6ece2-3e0d-4425-ac00-e444be6b56cb");
 
-    public final static int TETHERING_ERROR = -1;
+    public final static int TETHERING_ERROR = 3;
     public final static int TETHERING_DISABLED = 0;
     public final static int TETHERING_ENABLED = 1;
     public final static int TETHERING_STATE = 2;
@@ -165,6 +171,24 @@ class WirelessTools {
         return sendRemoteTetherState(context, address, TETHERING_STATE);
     }
 
+    public static void checkWriteSettingsPermission(final Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.System.canWrite(context)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertTheme);
+                AlertDialog alert = builder.setMessage(R.string.need_write_settings)
+                        .setPositiveButton(R.string.open_system_settings, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                @SuppressLint("InlinedApi") Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:com.azi.tethermote"));
+                                context.startActivity(intent);
+                            }
+                        }).create();
+//                alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                alert.show();
+            }
+        }
+    }
+
     public static boolean enableLocalTethering(Context context, boolean enable) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
@@ -175,8 +199,12 @@ class WirelessTools {
                     method.invoke(wifiManager, null, enable);
                     return true;
                 } catch (Exception e) {
-                    //showToast(context, "enableLocalTethering Error " + e.getMessage(), Toast.LENGTH_SHORT);
-                    ((TethermoteApp) context.getApplicationContext()).sendException(e);
+                    if (e.getCause() instanceof SecurityException) {
+                        showToast(context, context.getString(R.string.write_settings_error), Toast.LENGTH_LONG);
+                    } else {
+                        //showToast(context, "enableLocalTethering Error " + e.getMessage(), Toast.LENGTH_SHORT);
+                        ((TethermoteApp) context.getApplicationContext()).sendException(e);
+                    }
                     e.printStackTrace();
                 }
             }

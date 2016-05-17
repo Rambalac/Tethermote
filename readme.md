@@ -13,3 +13,5 @@ Windows 10
 ----------
 
 Application will be able to enable WiFi tethering via bluetooth on Android devices where similar application is installed.
+
+Repository for Windows version is here https://github.com/Rambalac/TethermoteWindows

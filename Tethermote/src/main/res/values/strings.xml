@@ -24,4 +24,5 @@
     <string name="tether_disable_notification">Tap to disable tethering remotely.</string>
     <string name="show_ongoing_notification">Show ongoing switch notification</string>
     <string name="bluetooth_error">Bluetooth error</string>
+    <string name="write_settings_error">Tethermote requires Write Settings permission. Please open settings and give that permission.</string>
 </resources>

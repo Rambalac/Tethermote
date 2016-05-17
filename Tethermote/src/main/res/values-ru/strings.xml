@@ -11,7 +11,7 @@
     <string name="disabling">Отключение</string>
     <string name="enable_tethering">Включить тетеринг</string>
     <string name="enabling">Включение</string>
-    <string name="need_write_settings">Приложение Tethermote требует разрешение на Записть Настроек чтобы управлять тетерингом. Пожалуйста, разрешите его в Системных Настройках.</string>
+    <string name="need_write_settings">Приложение Tethermote требует разрешение на Изменение Настроек чтобы управлять тетерингом. Пожалуйста, разрешите его в Системных Настройках.</string>
     <string name="open_system_settings">Открыть Системные Настройки</string>
     <string name="pair_bluetooth">Спарить устройства Bluetooth</string>
     <string name="remote_device">Управляемое устройство</string>
@@ -21,4 +21,5 @@
     <string name="show_ongoing_notification">Показывать уведомление для переключения.</string>
     <string name="tether_disable_notification">Нажмите чтобы включить тетеринг удалённо.</string>
     <string name="tether_enable_notification">Нажмите чтобы выключить тетеринг удалённо.</string>
+    <string name="write_settings_error">Для приложения Tethermote требуется разрешить Иземенение Настроек. Пожалуйста, откройте настройки Tethermote.</string>
 </resources>

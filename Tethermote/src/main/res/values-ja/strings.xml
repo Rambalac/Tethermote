@@ -21,4 +21,5 @@
     <string name="show_ongoing_notification">通知センターにスウィッチを見せる</string>
     <string name="tether_disable_notification">リモートテザリングを消すためにここにタッチ</string>
     <string name="tether_enable_notification">リモートテザリングをつけるためにここにタッチ</string>
+    <string name="write_settings_error">テザリモトはテザリングを切り換えるためにシステム設定の書き込みの許可が必要です。テザリモト設定画面を開いてください。</string>
 </resources>
