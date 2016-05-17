@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TetherRemoteForAndroid.iml" filepath="$PROJECT_DIR$/TetherRemoteForAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tethermote/Tethermote.iml" filepath="$PROJECT_DIR$/Tethermote/Tethermote.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tethermotewear/tethermotewear.iml" filepath="$PROJECT_DIR$/tethermotewear/tethermotewear.iml" />
     </modules>
   </component>
 </project>

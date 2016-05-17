@@ -10,12 +10,14 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Tethermote" />
+            <option value="$PROJECT_DIR$/tethermotewear" />
           </set>
         </option>
         <option name="myModules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Tethermote" />
+            <option value="$PROJECT_DIR$/tethermotewear" />
           </set>
         </option>
       </GradleProjectSettings>
