@@ -13,6 +13,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.widget.Toast;
@@ -25,6 +26,8 @@ import java.util.UUID;
 
 class WirelessTools {
     public static final UUID SERVICE_UUID = UUID.fromString("5dc6ece2-3e0d-4425-ac00-e444be6b56cb");
+
+    public final static String tethermotePackageName = "com.azi.tethermote";
 
     public final static int TETHERING_ERROR = 3;
     public final static int TETHERING_DISABLED = 0;
@@ -108,40 +111,39 @@ class WirelessTools {
         }
         String deviceName = device.getName();
         //String deviceErrorMessage = context.getString(R.string.bluetooth_device_not_accessible, deviceName);
-        try {
-            BluetoothSocket clientSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
-            if (clientSocket == null) {
-                //showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
-                return TETHERING_ERROR;
-            }
-            startSocketTimeout(clientSocket, 5000);
-            clientSocket.connect();
+        for (int tryout = 3; tryout > 0; tryout--)
             try {
-                OutputStream outStream = clientSocket.getOutputStream();
-                if (outStream == null) {
+                BluetoothSocket clientSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
+                if (clientSocket == null) {
                     //showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
                     return TETHERING_ERROR;
                 }
-                outStream.write(state);
-                outStream.flush();
+                startSocketTimeout(clientSocket, 5000);
+                clientSocket.connect();
+                try {
+                    OutputStream outStream = clientSocket.getOutputStream();
+                    if (outStream == null) {
+                        //showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
+                        return TETHERING_ERROR;
+                    }
+                    outStream.write(state);
+                    outStream.flush();
 
-                InputStream inStream = clientSocket.getInputStream();
+                    InputStream inStream = clientSocket.getInputStream();
 
-                return inStream.read();
-            } finally {
-                clientSocket.close();
+                    return inStream.read();
+                } finally {
+                    clientSocket.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (tryout != 1) try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
-        } catch (IOException ex) {
-            //showToast(context, deviceErrorMessage, Toast.LENGTH_LONG);
-            ((TethermoteApp) context.getApplicationContext()).sendException(ex);
-            ex.printStackTrace();
-            return TETHERING_ERROR;
-        } catch (Exception e) {
-            //showToast(context, "Send failed: " + e.getMessage(), Toast.LENGTH_LONG);
-            ((TethermoteApp) context.getApplicationContext()).sendException(e);
-            e.printStackTrace();
-            return TETHERING_ERROR;
-        }
+        return TETHERING_ERROR;
     }
 
     private static void enableBluetooth(Context context) {
@@ -179,7 +181,7 @@ class WirelessTools {
                         .setPositiveButton(R.string.open_system_settings, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                @SuppressLint("InlinedApi") Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:com.azi.tethermote"));
+                                @SuppressLint("InlinedApi") Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + tethermotePackageName));
                                 context.startActivity(intent);
                             }
                         }).create();

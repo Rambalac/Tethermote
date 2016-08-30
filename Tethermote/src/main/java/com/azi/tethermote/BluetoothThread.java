@@ -1,13 +1,8 @@
 package com.azi.tethermote;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.content.Intent;
-import android.os.SystemClock;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -18,7 +13,7 @@ class BluetoothThread extends Thread {
     private static final String appName = "Tethermote";
     private final BluetoothService context;
     private BluetoothServerSocket myServerSocket;
-
+    private boolean run = true;
 
     public BluetoothThread(BluetoothService context) {
         this.context = context;
@@ -28,7 +23,7 @@ class BluetoothThread extends Thread {
     public void run() {
         //WirelessTools.showToast(context, "Service starting", Toast.LENGTH_LONG);
 
-        while (true) {
+        while (run) {
             try {
                 BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (btAdapter == null || !btAdapter.isEnabled()) {
@@ -43,7 +38,7 @@ class BluetoothThread extends Thread {
                         }
                     }
                     myServerSocket = btAdapter.listenUsingRfcommWithServiceRecord(appName, WirelessTools.SERVICE_UUID);
-                    while (true) {
+                    while (run) {
                         BluetoothSocket socket = myServerSocket.accept();
                         String deviceName = socket.getRemoteDevice().getName();
                         try {
@@ -98,9 +93,11 @@ class BluetoothThread extends Thread {
     }
 
     public void cancel() {
+        run = false;
         if (myServerSocket != null) {
             try {
                 myServerSocket.close();
+                myServerSocket = null;
             } catch (Exception e) {
                 e.printStackTrace();
             }

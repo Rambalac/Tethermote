@@ -1,20 +1,20 @@
 package com.azi.tethermote;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
+import android.preference.PreferenceManager;
 
-public class BootReceiver extends BroadcastReceiver {
-    public BootReceiver() {
+public class SystemReceiver extends BroadcastReceiver {
+    public SystemReceiver() {
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
-        if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+        Boolean enableTetheringService = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("enable_tethering", false);
+
+        if (enableTetheringService) {
             Intent startServiceIntent = new Intent(context, BluetoothService.class);
             context.startService(startServiceIntent);
         }

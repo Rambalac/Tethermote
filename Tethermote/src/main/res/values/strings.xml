@@ -5,7 +5,7 @@
     <string name="disabling">Disabling</string>
     <string name="disable_on_screen_off">Disable tethering on screen off</string>
     <string name="enable_on_screen_on">Enable tethering on screen on</string>
-    <string name="remote_device">Remote device</string>
+    <string name="remote_device_name">Selected device</string>
     <string name="enable_tethering">Enable Tethering</string>
     <string name="connect_to_wifi">Connect to WiFi</string>
     <string name="pair_bluetooth">Pair new Bluetooth devices</string>
@@ -25,4 +25,7 @@
     <string name="show_ongoing_notification">Show ongoing switch notification</string>
     <string name="bluetooth_error">Bluetooth error</string>
     <string name="write_settings_error">Tethermote requires Write Settings permission. Please open settings and give that permission.</string>
+    <string name="enable_remote_tethering">Use this device for tethering</string>
+    <string name="this_device">This device</string>
+    <string name="remove_device">Remote device</string>
 </resources>

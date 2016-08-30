@@ -2,11 +2,22 @@
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <PreferenceCategory
+        android:title="@string/this_device">
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="enable_tethering"
+        android:title="@string/enable_remote_tethering" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/remove_device"
+        >
     <ListPreference
         android:key="remote_device"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
-        android:title="@string/remote_device" />
+        android:title="@string/remote_device_name" />
 
     <SwitchPreference
         android:defaultValue="false"
@@ -29,4 +40,5 @@
     <Preference
         android:key="connect_wifi"
         android:widgetLayout="@layout/connect_wifi" />
+    </PreferenceCategory>
 </PreferenceScreen>

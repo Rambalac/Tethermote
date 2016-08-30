@@ -15,6 +15,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 import android.provider.Settings;
 import android.view.View;
 
@@ -130,11 +131,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction().replace(android.R.id.content,
                 fragment, "general").commit();
-
-        Intent startServiceIntent = new Intent(this, BluetoothService.class);
-        getApplicationContext().startService(startServiceIntent);
-
-        WirelessTools.checkWriteSettingsPermission(this);
     }
 
     /**
@@ -190,6 +186,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return true;
             }
         };
+        private Preference.OnPreferenceChangeListener OnEnableTetheringPreferenceClickListener = new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object val) {
+                Boolean value = (Boolean) val;
+
+                Activity act = GeneralPreferenceFragment.this.getActivity();
+                Intent serviceIntent = new Intent(act, BluetoothService.class);
+                if (value) {
+                    //act.getApplicationContext().startService(serviceIntent);
+
+                    WirelessTools.checkWriteSettingsPermission(act);
+                } else {
+                    act.getApplicationContext().stopService(serviceIntent);
+                }
+
+                return true;
+            }
+        };
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -201,6 +215,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             final ListPreference listPreference = (ListPreference) findPreference("remote_device");
             setListOfDevices(GeneralPreferenceFragment.this.getActivity(), listPreference);
             listPreference.setOnPreferenceClickListener(OnRemoteDevicePreferenceClickListener);
+
+            final SwitchPreference enableTetheringPreference = (SwitchPreference) findPreference("enable_tethering");
+            enableTetheringPreference.setOnPreferenceChangeListener(OnEnableTetheringPreferenceClickListener);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
