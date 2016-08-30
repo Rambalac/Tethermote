@@ -27,5 +27,5 @@
     <string name="write_settings_error">Tethermote requires Write Settings permission. Please open settings and give that permission.</string>
     <string name="enable_remote_tethering">Use this device for tethering</string>
     <string name="this_device">This device</string>
-    <string name="remove_device">Remote device</string>
+    <string name="remote_device">Remote device</string>
 </resources>

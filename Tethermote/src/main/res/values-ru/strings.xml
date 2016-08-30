@@ -24,5 +24,5 @@
     <string name="write_settings_error">Для приложения Tethermote требуется разрешить Иземенение Настроек. Пожалуйста, откройте настройки Tethermote.</string>
     <string name="enable_remote_tethering">Использовать это устройств для тетеринга</string>
     <string name="this_device">Это устройство</string>
-    <string name="remove_device_name">Выбранное устройство</string>
+    <string name="remote_device_name">Выбранное устройство</string>
 </resources>
