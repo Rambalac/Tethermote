@@ -72,7 +72,7 @@ class BluetoothThread extends Thread {
                 } catch (Exception e) {
                     e.printStackTrace();
                     try {
-                        myServerSocket.close();
+                        if (myServerSocket != null) myServerSocket.close();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

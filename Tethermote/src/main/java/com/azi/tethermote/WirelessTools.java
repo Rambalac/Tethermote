@@ -111,7 +111,7 @@ class WirelessTools {
         }
         String deviceName = device.getName();
         //String deviceErrorMessage = context.getString(R.string.bluetooth_device_not_accessible, deviceName);
-        for (int tryout = 3; tryout > 0; tryout--)
+        for (int tryout = 10; tryout > 0; tryout--)
             try {
                 BluetoothSocket clientSocket = device.createRfcommSocketToServiceRecord(SERVICE_UUID);
                 if (clientSocket == null) {
@@ -229,5 +229,30 @@ class WirelessTools {
             }
         }
         return false;
+    }
+
+    public static void checkPowerSave(Context context) {
+        final String resultSamsung = Settings.System.getString(context.getContentResolver(), "psm_switch");
+        final String resultHtc = Settings.System.getString(context.getContentResolver(), "user_powersaver_enable");
+        if ((resultSamsung != null && resultSamsung.equals("1")) || (resultHtc != null && resultHtc.equals("1"))) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertTheme);
+            AlertDialog alert = builder.setMessage(R.string.need_power_saving).create();
+            alert.show();
+        }
+
+        // ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+        // ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            //if (!pm.isIgnoringBatteryOptimizations(tethermotePackageName))
+            {
+                Intent disablePowerSaveIntent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                //disablePowerSaveIntent.setData(Uri.parse("package:" + tethermotePackageName));
+                context.startActivity(disablePowerSaveIntent);
+
+            }
+        }
     }
 }

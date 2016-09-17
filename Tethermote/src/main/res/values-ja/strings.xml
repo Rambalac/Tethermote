@@ -25,4 +25,5 @@
     <string name="write_settings_error">テザリモトはテザリングを切り換えるためにシステム設定の書き込みの許可が必要です。テザリモト設定画面を開いてください。</string>
     <string name="enable_remote_tethering">このデバイスのテザリングを使う</string>
     <string name="this_device">このデバイス</string>
+    <string name="need_power_saving">Your device is using non-standard power saving feature. If you dont disable this application in its settings after several days remote switch stop working till you reopen this settings screen. It can be disabled only manually, probably in Battery settings.</string>
 </resources>

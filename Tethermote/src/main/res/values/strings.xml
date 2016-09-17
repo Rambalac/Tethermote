@@ -28,4 +28,5 @@
     <string name="enable_remote_tethering">Use this device for tethering</string>
     <string name="this_device">This device</string>
     <string name="remote_device">Remote device</string>
+    <string name="need_power_saving">Your device is using non-standard power saving feature. If you dont disable this application in its settings after several days remote switch stop working till you reopen this settings screen. It can be disabled only manually, probably in Battery settings.</string>
 </resources>

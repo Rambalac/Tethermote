@@ -7,6 +7,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -57,6 +59,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 : null);
             }
             return true;
+        }
+    };
+    private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferecesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SwitchNotification.Check(SettingsActivity.this);
+                }
+            }).start();
         }
     };
 
@@ -131,6 +144,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction().replace(android.R.id.content,
                 fragment, "general").commit();
+
+        IntentFilter stateFilter = new IntentFilter();
+        stateFilter.addAction(Intent.ACTION_SCREEN_ON);
+        stateFilter.addAction(Intent.ACTION_SCREEN_OFF);
+
+        registerReceiver(new StateReceiver(), stateFilter);
+
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(sharedPreferecesListener);
+
+        SwitchNotification.Check(this);
     }
 
     /**
@@ -194,9 +217,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 Activity act = GeneralPreferenceFragment.this.getActivity();
                 Intent serviceIntent = new Intent(act, BluetoothService.class);
                 if (value) {
-                    //act.getApplicationContext().startService(serviceIntent);
-
+                    act.getApplicationContext().startService(serviceIntent);
                     WirelessTools.checkWriteSettingsPermission(act);
+
+                    WirelessTools.checkPowerSave(act);
                 } else {
                     act.getApplicationContext().stopService(serviceIntent);
                 }

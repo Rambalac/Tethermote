@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class SystemReceiver extends BroadcastReceiver {
     public SystemReceiver() {
@@ -11,12 +12,18 @@ public class SystemReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Boolean enableTetheringService = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean("enable_tethering", false);
+        Log.d(getClass().getSimpleName(), "Starting service");
+        try {
+            Boolean enableTetheringService = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean("enable_tethering", false);
 
-        if (enableTetheringService) {
-            Intent startServiceIntent = new Intent(context, BluetoothService.class);
-            context.startService(startServiceIntent);
+            if (enableTetheringService) {
+
+                Intent startServiceIntent = new Intent(context, BluetoothService.class);
+                context.startService(startServiceIntent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

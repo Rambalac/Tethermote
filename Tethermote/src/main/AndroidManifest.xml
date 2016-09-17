@@ -38,12 +38,12 @@
             </intent-filter>
         </service>
 
-        <receiver
-            android:name=".SystemReceiver"
-            android:enabled="true"
-            android:exported="true">
+        <receiver android:name=".SystemReceiver">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />
             </intent-filter>
         </receiver>
         <receiver android:name=".TetherRemoteWidget">

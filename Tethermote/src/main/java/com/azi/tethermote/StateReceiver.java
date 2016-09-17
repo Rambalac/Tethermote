@@ -1,6 +1,5 @@
 package com.azi.tethermote;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +9,6 @@ import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 
 public class StateReceiver extends BroadcastReceiver {
-    private final BluetoothService service;
-
-    public StateReceiver(BluetoothService service) {
-        this.service = service;
-    }
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -42,14 +36,6 @@ public class StateReceiver extends BroadcastReceiver {
                     int result = WirelessTools.enableRemoteTethering(context, false);
                     SwitchNotification.Check(context, result != WirelessTools.TETHERING_ENABLED);
                     TetherRemoteWidget.updateWidgets(context, result);
-                } else if (mAction.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-                    final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-                    switch (state) {
-                        case BluetoothAdapter.STATE_ON:
-                            service.startThread();
-                            break;
-                    }
-
                 }
             }
         }).start();
