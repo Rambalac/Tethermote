@@ -2,7 +2,11 @@
 <resources>
     <string name="app_name">Tethermote</string>
     <string name="bluetooth_device_not_accessible">Bluetooth устройство недоступно\r\n%1$s</string>
-    <string name="bluetooth_device_not_accessible_notification">Возможно устройство или слишком далеко, или его Bluetooth отключен, или само устройство выключено. Если устройство всё таки рядом и работает, попробуйте запустить Настройки ещё раз.</string>
+    <string name="bluetooth_device_not_accessible_notification">
+        Возможно устройство или слишком далеко, или его Bluetooth отключен, или само устройство выключено.\r\n
+        Если устройство всё таки рядом и работает, попробуйте запустить Настройки ещё раз.
+        Если вы используете нестандартную систему энергосбережения, или ваше устройство Samsung или HTC, которое имеет встроенную нестандартную систему энергосбережения, добавьте это приложение в исключения.
+    </string>
     <string name="bluetooth_device_not_found">Bluetooth устройство не найдено.</string>
     <string name="bluetooth_error">Ошибка Bluetooth</string>
     <string name="connect_to_wifi">Подключение по WiFi</string>

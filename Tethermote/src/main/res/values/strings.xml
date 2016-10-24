@@ -14,7 +14,11 @@
     <string name="need_write_settings">Tethermote requires Write Settings permission to control WiFi tethering. Please enabled it on system settings screen.</string>
     <string name="open_system_settings">Open System Settings</string>
 
-    <string name="bluetooth_device_not_accessible_notification">Device can be too far for Bluetooth or its Bluetooth is disabled or device is turned off.\r\nIf device is near by but still does not work try to run Tethermote Settings on that device again</string>
+    <string name="bluetooth_device_not_accessible_notification">
+        Device can be too far for Bluetooth or its Bluetooth is disabled or device is turned off.\r\n
+        If device is near by but still does not work try to run Tethermote Settings on that device again.\r\n
+        If you are using nonstandard powersaving system or your device is Samsung or HTC, which is using nonstandard powersaving system, exclude this application from it.
+    </string>
     <string name="bluetooth_device_not_accessible">Bluetooth device is not accessible\r\n%1$s</string>
     <string name="remote_tethering_enabling">Enabling tethering for remote device\r\n%1$s</string>
     <string name="remote_tethering_disabling">Disabling tethering for remote device\r\n%1$s</string>

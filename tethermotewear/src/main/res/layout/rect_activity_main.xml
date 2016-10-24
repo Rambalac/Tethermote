@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.tethermotewear.MainActivity"
-    tools:deviceIds="wear_square">
+    tools:deviceIds="wear_square"
+    tools:showIn="@layout/activity_main">
 
     <TextView
         android:id="@+id/text"
