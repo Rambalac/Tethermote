@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -53,10 +54,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 int index = listPreference.findIndexOfValue(stringValue);
 
                 // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
+                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
             }
             return true;
         }
@@ -109,31 +107,52 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         context.startActivityForResult(enableBtIntent, BLUETOOTH_PAIR_REQUEST_CODE);
     }
 
-    private static void setListOfDevices(Activity act, ListPreference lp) {
-        ArrayList<CharSequence> entriesList = new ArrayList<>();
-        ArrayList<CharSequence> entryValuesList = new ArrayList<>();
-        entriesList.add("None");
-        entryValuesList.add("");
-        entriesList.add("Self");
-        entryValuesList.add(".");
+    private static void setListOfDevices(final Activity act, final ListPreference lp) {
+        AsyncTask task = new AsyncTask() {
+            ArrayList<CharSequence> entriesList = new ArrayList<>();
+            ArrayList<CharSequence> entryValuesList = new ArrayList<>();
+            String stringValue;
 
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (btAdapter != null) {
-            if (!btAdapter.isEnabled()) {
-                enableBluetooth(act);
+            @Override
+            protected void onPreExecute() {
+                stringValue = lp.getValue();
             }
 
-            Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                entriesList.add("None");
+                entryValuesList.add("");
+                entriesList.add("Self");
+                entryValuesList.add(".");
 
-            for (BluetoothDevice device : pairedDevices) {
-                entriesList.add(device.getName());
-                entryValuesList.add(device.getAddress());
+                BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (btAdapter != null) {
+                    if (!btAdapter.isEnabled()) {
+                        enableBluetooth(act);
+                    }
+
+                    Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+
+                    for (BluetoothDevice device : pairedDevices) {
+                        entriesList.add(device.getName());
+                        entryValuesList.add(device.getAddress());
+                    }
+
+                }
+                return null;
             }
 
-        }
+            @Override
+            protected void onPostExecute(Object o) {
+                lp.setEntries(entriesList.toArray(new CharSequence[entriesList.size()]));
+                lp.setEntryValues(entryValuesList.toArray(new CharSequence[entryValuesList.size()]));
+                int index = lp.findIndexOfValue(stringValue);
 
-        lp.setEntries(entriesList.toArray(new CharSequence[entriesList.size()]));
-        lp.setEntryValues(entryValuesList.toArray(new CharSequence[entryValuesList.size()]));
+                // Set the summary to reflect the new value.
+                lp.setSummary(index >= 0 ? lp.getEntries()[index] : null);
+            }
+        };
+        task.execute();
     }
 
     @Override
@@ -153,7 +172,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(sharedPreferencesListener);
 
-        SwitchNotification.Check(this);
+        final Context context = this;
+
+        new AsyncTask<Boolean, Boolean, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Boolean... booleen) {
+                SwitchNotification.Check(context);
+                return true;
+            }
+        }.execute();
+
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("enable_tethering", false)) {
+            WirelessTools.checkWriteSettingsPermission(this);
+        }
     }
 
     /**
@@ -209,6 +240,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return true;
             }
         };
+
         private final Preference.OnPreferenceChangeListener OnEnableTetheringPreferenceClickListener = new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object val) {
@@ -233,10 +265,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
-            setHasOptionsMenu(true);
-
 
             final ListPreference listPreference = (ListPreference) findPreference("remote_device");
+
+            bindPreferenceSummaryToValue(listPreference);
             setListOfDevices(GeneralPreferenceFragment.this.getActivity(), listPreference);
             listPreference.setOnPreferenceClickListener(OnRemoteDevicePreferenceClickListener);
 
@@ -247,7 +279,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(listPreference);
 //            bindPreferenceSummaryToValue(findPreference("disable_on_screen_off"));
 //            bindPreferenceSummaryToValue(findPreference("enable_on_screen_on"));
         }

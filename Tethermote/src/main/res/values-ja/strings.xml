@@ -10,8 +10,8 @@
     <string name="enabling">つけている</string>
     <string name="disabling">消している</string>
     <string name="enable_tethering">テザリングをつける</string>
-    <string name="enable_on_screen_on">画面をつけたらテザリングもつける</string>
-    <string name="disable_on_screen_off">画面を消したらテザリングも消す</string>
+    <string name="enable_on_screen_on">テザリングをつける</string>
+    <string name="disable_on_screen_off">テザリングを消す</string>
     <string name="connect_to_wifi">WiFiの接続</string>
     <string name="bluetooth_error">Bluetoothエラー</string>
     <string name="bluetooth_device_not_found">Bluetoothデバイスは見つからない</string>
@@ -19,11 +19,18 @@
     <string name="remote_tethering_disabling">リモートデバイスのためにテザリングを消している\r\n%1$s</string>
     <string name="remote_tethering_enabling">リモートデバイスのためにテザリングをつけている\r\n%1$s</string>
     <string name="settings_name">テザリモト設定</string>
-    <string name="show_ongoing_notification">通知センターにスウィッチを見せる</string>
+    <string name="show_ongoing_notification">通知センターに見せる</string>
     <string name="tether_disable_notification">リモートテザリングを消すためにここにタッチ</string>
     <string name="tether_enable_notification">リモートテザリングをつけるためにここにタッチ</string>
     <string name="write_settings_error">テザリモトはテザリングを切り換えるためにシステム設定の書き込みの許可が必要です。テザリモト設定画面を開いてください。</string>
-    <string name="enable_remote_tethering">このデバイスのテザリングを使う</string>
+    <string name="enable_remote_tethering">テザリングを使う</string>
     <string name="this_device">このデバイス</string>
-    <string name="need_power_saving">Your device is using non-standard power saving feature. If you dont disable this application in its settings after several days remote switch stop working till you reopen this settings screen. It can be disabled only manually, probably in Battery settings.</string>
+    <string name="disable_wifi">WiFiを消す</string>
+    <string name="wifi_need_disable">このデバイスはWiFi接続とテザリング同時につけることが出来ません。WiFi接続を切る。</string>
+    <string name="disable_wifi_summary">WiFi接続とテザリング同時に出来ない場合WiFi接続を切る。</string>
+    <string name="enable_remote_tethering_summary">このデバイスのテザリングをつけるのを同ずる。</string>
+    <string name="disable_on_screen_off_summary">このデバイスを消すとリモートテザリングも消す。</string>
+    <string name="disable_on_screen_on_summary">このデバイスをつけるとリモートテザリングもつける。</string>
+    <string name="show_ongoing_notification_summary">このデバイスの通知センターにテザリングスウィッチを表示せる</string>
+    <string name="wifi_suggest_disable">このデバイスはWiFi接続とテザリング同時につけることが出来ません。\\nもうしWiFi接続があるときでもてざりんぐをつけたい場合「WiFiを消す」設定をつけて下さい。</string>
 </resources>

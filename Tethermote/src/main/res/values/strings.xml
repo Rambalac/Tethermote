@@ -3,8 +3,8 @@
 
     <string name="enabling">Enabling</string>
     <string name="disabling">Disabling</string>
-    <string name="disable_on_screen_off">Disable tethering on screen off</string>
-    <string name="enable_on_screen_on">Enable tethering on screen on</string>
+    <string name="disable_on_screen_off">Disable on screen off</string>
+    <string name="enable_on_screen_on">Enable on screen on</string>
     <string name="remote_device_name">Selected device</string>
     <string name="enable_tethering">Enable Tethering</string>
     <string name="connect_to_wifi">Connect to WiFi</string>
@@ -14,14 +14,10 @@
     <string name="need_write_settings">Tethermote requires Write Settings permission to control WiFi tethering. Please enabled it on system settings screen.</string>
     <string name="open_system_settings">Open System Settings</string>
 
-    <string name="bluetooth_device_not_accessible_notification">
-        Device can be too far for Bluetooth or its Bluetooth is disabled or device is turned off.\r\n
-        If device is near by but still does not work try to run Tethermote Settings on that device again.\r\n
-        If you are using nonstandard powersaving system or your device is Samsung or HTC, which is using nonstandard powersaving system, exclude this application from it.
-    </string>
-    <string name="bluetooth_device_not_accessible">Bluetooth device is not accessible\r\n%1$s</string>
-    <string name="remote_tethering_enabling">Enabling tethering for remote device\r\n%1$s</string>
-    <string name="remote_tethering_disabling">Disabling tethering for remote device\r\n%1$s</string>
+    <string name="bluetooth_device_not_accessible_notification">Device can be too far for Bluetooth or its Bluetooth is disabled or device is turned off.\nIf device is near by but still does not work try to run Tethermote Settings on that device again.\nIf you are using nonstandard powersaving system or your device is Samsung or HTC, which is using nonstandard powersaving system, add this application as exclusion.</string>
+    <string name="bluetooth_device_not_accessible">Bluetooth device is not accessible\n%1$s</string>
+    <string name="remote_tethering_enabling">Enabling tethering for remote device\n%1$s</string>
+    <string name="remote_tethering_disabling">Disabling tethering for remote device\n%1$s</string>
 
     <string name="tether_enable_notification">Tap to enable tethering remotely.</string>
 
@@ -29,8 +25,15 @@
     <string name="show_ongoing_notification">Show ongoing switch notification</string>
     <string name="bluetooth_error">Bluetooth error</string>
     <string name="write_settings_error">Tethermote requires Write Settings permission. Please open settings and give that permission.</string>
-    <string name="enable_remote_tethering">Use this device for tethering</string>
+    <string name="enable_remote_tethering">Use for tethering</string>
     <string name="this_device">This device</string>
     <string name="remote_device">Remote device</string>
-    <string name="need_power_saving">Your device is using non-standard power saving feature. If you dont disable this application in its settings after several days remote switch stop working till you reopen this settings screen. It can be disabled only manually, probably in Battery settings.</string>
+    <string name="wifi_need_disable">This device does not support WiFi tethering with WiFi enabled. Disabling WiFi.</string>
+    <string name="disable_wifi">Disable WiFi</string>
+    <string name="enable_remote_tethering_summary">Allow switching this device WiFi tethering.</string>
+    <string name="disable_wifi_summary">Disable WiFi connection if device does not support WiFi tethering in the same time.</string>
+    <string name="disable_on_screen_off_summary">Disable remote tethering when this device screen turns off.</string>
+    <string name="disable_on_screen_on_summary">Enable remote tethering when this device screen turns on.</string>
+    <string name="show_ongoing_notification_summary">Show ongoing switch notification to switch remote tethering from notification bar.</string>
+    <string name="wifi_suggest_disable">This device does not support WiFi tethering while WiFi is connected.\nIf you need switching tethering even if WiFi is connected turn \"Disable WiFi\" on.</string>
 </resources>

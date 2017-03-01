@@ -34,7 +34,6 @@ public class TetherRemoteWidget extends AppWidgetProvider {
         handler.post(new Runnable() {
             @Override
             public void run() {
-
                 // Construct the RemoteViews object
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.tether_remote_widget);
 
@@ -127,7 +126,6 @@ public class TetherRemoteWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId, WirelessTools.TETHERING_STATE);
         }
-
         new Thread(new Runnable() {
             @Override
             public void run() {

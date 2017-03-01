@@ -8,7 +8,11 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
@@ -20,6 +24,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
@@ -30,6 +35,7 @@ class WirelessTools {
     public final static int TETHERING_ENABLED = 1;
     public final static int TETHERING_STATE = 2;
     private final static String tethermotePackageName = "com.azi.tethermote";
+    private static Handler handler = new Handler(Looper.getMainLooper());
 
     public static int enableRemoteTethering(final Context context, boolean enable) {
         String address = getAddress(context);
@@ -41,19 +47,7 @@ class WirelessTools {
         } else {
             result = sendRemoteTetherState(context, address, enable ? TETHERING_ENABLED : TETHERING_DISABLED);
             if (result == TETHERING_ENABLED) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (int i = 0; i < 5; i++) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            WiFiRescan(context);
-                        }
-                    }
-                }).start();
+                handler.postDelayed(new WiFiScanner(context, 15, 1000), 10);
             }
         }
 
@@ -159,6 +153,16 @@ class WirelessTools {
                 .getString("remote_device", "");
     }
 
+    private static boolean getWiFiDisablePref(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("disable_wifi", true);
+    }
+
+    private static void setWiFiDisablePref(Context context, boolean val) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit().putBoolean("disable_wifi", val).commit();
+    }
+
     public static int getRemoteTetherState(Context context) {
         String address = getAddress(context);
         if (address.isEmpty()) {
@@ -188,68 +192,142 @@ class WirelessTools {
         }
     }
 
-    public static boolean enableLocalTethering(Context context, boolean enable) {
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-
-        Method[] methods = wifiManager.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.getName().equals("setWifiApEnabled")) {
-                try {
-                    method.invoke(wifiManager, null, enable);
-                    return true;
-                } catch (Exception e) {
-                    if (e.getCause() instanceof SecurityException) {
-                        showToast(context, context.getString(R.string.write_settings_error), Toast.LENGTH_LONG);
-                    } else {
-                        //showToast(context, "enableLocalTethering Error " + e.getMessage(), Toast.LENGTH_SHORT);
-                        ((TethermoteApp) context.getApplicationContext()).sendException(e);
-                    }
-                    e.printStackTrace();
+    private static boolean WiFiConnected(Context context) {
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            for (Network net : connManager.getAllNetworks()) {
+                NetworkInfo ni = connManager.getNetworkInfo(net);
+                if (ni.getType() == ConnectivityManager.TYPE_WIFI) {
+                    mWifi = ni;
+                    break;
                 }
             }
+        } else {
+            mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        }
+        if (mWifi == null) return false;
+        return mWifi.isConnected();
+    }
+
+    private static void setWifiApEnabled(Context context, boolean enable) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        final Method method = wifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+        method.invoke(wifiManager, null, enable);
+    }
+
+    public static boolean enableLocalTethering(final Context context, final boolean enableAp) {
+        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+        try {
+            boolean wifidisable = getWiFiDisablePref(context);
+            if (enableAp && wifidisable) {
+                wifiManager.setWifiEnabled(false);
+            }
+
+            setWifiApEnabled(context, enableAp);
+
+            handler.removeCallbacksAndMessages(null);
+            if (!enableAp && wifidisable) {
+                wifiManager.setWifiEnabled(true);
+            } else if (enableAp && !wifidisable) {
+                handler.postDelayed(new StateChecker(context, 20, 500), 500);
+            }
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        } catch (Exception e) {
+            if (e.getCause() instanceof SecurityException) {
+                showToast(context, context.getString(R.string.write_settings_error), Toast.LENGTH_LONG);
+            } else {
+                showToast(context, "enableLocalTethering Error " + e.getMessage(), Toast.LENGTH_SHORT);
+                ((TethermoteApp) context.getApplicationContext()).sendException(e);
+            }
+            e.printStackTrace();
         }
         return false;
     }
 
     public static boolean getLocalTetheringState(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        Method[] wmMethods = wifiManager.getClass().getDeclaredMethods();
-        for (Method method : wmMethods) {
-            if (method.getName().equals("isWifiApEnabled")) {
-                try {
-                    return (boolean) method.invoke(wifiManager);
-                } catch (Exception e) {
-                    //showToast(context, "getLocalTetheringState Error " + e.getMessage(), Toast.LENGTH_SHORT);
-                    ((TethermoteApp) context.getApplicationContext()).sendException(e);
-                    e.printStackTrace();
-                }
-            }
+        try {
+            Method method = wifiManager.getClass().getMethod("isWifiApEnabled");
+            return (boolean) method.invoke(wifiManager);
+        } catch (Exception e) {
+            //showToast(context, "getLocalTetheringState Error " + e.getMessage(), Toast.LENGTH_SHORT);
+            ((TethermoteApp) context.getApplicationContext()).sendException(e);
+            e.printStackTrace();
         }
         return false;
     }
 
-//    public static void checkPowerSave(Context context) {
-//        final String resultSamsung = Settings.System.getString(context.getContentResolver(), "psm_switch");
-//        final String resultHtc = Settings.System.getString(context.getContentResolver(), "user_powersaver_enable");
-//        if ((resultSamsung != null && resultSamsung.equals("1")) || (resultHtc != null && resultHtc.equals("1"))) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertTheme);
-//            AlertDialog alert = builder.setMessage(R.string.need_power_saving).create();
-//            alert.show();
-//        }
-//
-//        // ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
-//        // ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-//
-//
-//        if (Build.VERSION.SDK_INT >= 23) {
-//            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-//            //if (!pm.isIgnoringBatteryOptimizations(tethermotePackageName))
-//            {
-//                Intent disablePowerSaveIntent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-//                //disablePowerSaveIntent.setData(Uri.parse("package:" + tethermotePackageName));
-//                context.startActivity(disablePowerSaveIntent);
-//
-//            }
-//        }
-//    }
+    static class WiFiScanner implements Runnable {
+        final Context context;
+        final int delay;
+        int counter;
+
+        WiFiScanner(Context context, int counter, int delay) {
+            this.context = context;
+            this.counter = counter;
+            this.delay = delay;
+        }
+
+        @Override
+        public void run() {
+            boolean state = getLocalTetheringState(context);
+            if (!state) {
+                if (WiFiConnected(context)) return;
+
+                WiFiRescan(context);
+
+                counter--;
+                if (counter > 0) {
+                    handler.postDelayed(this, delay);
+                }
+            }
+        }
+
+    }
+
+    static class StateChecker implements Runnable {
+        final Context context;
+        final int delay;
+        int counter;
+
+        StateChecker(Context context, int counter, int delay) {
+            this.context = context;
+            this.counter = counter;
+            this.delay = delay;
+        }
+
+        @Override
+        public void run() {
+            boolean state = getLocalTetheringState(context);
+            if (!state) {
+                counter--;
+                if (counter > 0) {
+                    handler.postDelayed(this, delay);
+                } else {
+                    if (!WiFiConnected(context)) {
+                        showToast(context, context.getString(R.string.wifi_need_disable), Toast.LENGTH_LONG);
+
+                        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                        wifiManager.setWifiEnabled(false);
+                        try {
+                            setWifiApEnabled(context, true);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
+                        setWiFiDisablePref(context, true);
+                    } else {
+                        showToast(context, context.getString(R.string.wifi_suggest_disable), Toast.LENGTH_LONG);
+                    }
+                }
+            }
+        }
+    }
 }
