@@ -13,7 +13,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.widget.Toast;
@@ -26,13 +25,11 @@ import java.util.UUID;
 
 class WirelessTools {
     public static final UUID SERVICE_UUID = UUID.fromString("5dc6ece2-3e0d-4425-ac00-e444be6b56cb");
-
-    public final static String tethermotePackageName = "com.azi.tethermote";
-
     public final static int TETHERING_ERROR = 3;
     public final static int TETHERING_DISABLED = 0;
     public final static int TETHERING_ENABLED = 1;
     public final static int TETHERING_STATE = 2;
+    private final static String tethermotePackageName = "com.azi.tethermote";
 
     public static int enableRemoteTethering(final Context context, boolean enable) {
         String address = getAddress(context);
@@ -231,28 +228,28 @@ class WirelessTools {
         return false;
     }
 
-    public static void checkPowerSave(Context context) {
-        final String resultSamsung = Settings.System.getString(context.getContentResolver(), "psm_switch");
-        final String resultHtc = Settings.System.getString(context.getContentResolver(), "user_powersaver_enable");
-        if ((resultSamsung != null && resultSamsung.equals("1")) || (resultHtc != null && resultHtc.equals("1"))) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertTheme);
-            AlertDialog alert = builder.setMessage(R.string.need_power_saving).create();
-            alert.show();
-        }
-
-        // ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
-        // ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            //if (!pm.isIgnoringBatteryOptimizations(tethermotePackageName))
-            {
-                Intent disablePowerSaveIntent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                //disablePowerSaveIntent.setData(Uri.parse("package:" + tethermotePackageName));
-                context.startActivity(disablePowerSaveIntent);
-
-            }
-        }
-    }
+//    public static void checkPowerSave(Context context) {
+//        final String resultSamsung = Settings.System.getString(context.getContentResolver(), "psm_switch");
+//        final String resultHtc = Settings.System.getString(context.getContentResolver(), "user_powersaver_enable");
+//        if ((resultSamsung != null && resultSamsung.equals("1")) || (resultHtc != null && resultHtc.equals("1"))) {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertTheme);
+//            AlertDialog alert = builder.setMessage(R.string.need_power_saving).create();
+//            alert.show();
+//        }
+//
+//        // ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+//        // ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+//
+//
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+//            //if (!pm.isIgnoringBatteryOptimizations(tethermotePackageName))
+//            {
+//                Intent disablePowerSaveIntent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+//                //disablePowerSaveIntent.setData(Uri.parse("package:" + tethermotePackageName));
+//                context.startActivity(disablePowerSaveIntent);
+//
+//            }
+//        }
+//    }
 }

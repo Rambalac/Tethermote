@@ -24,7 +24,7 @@ import android.app.Application;
 //import com.google.android.gms.analytics.StandardExceptionParser;
 //import com.google.android.gms.analytics.Tracker;
 
-public class TethermoteApp extends Application {
+class TethermoteApp extends Application {
 //    private Tracker mTracker;
 
     @Override

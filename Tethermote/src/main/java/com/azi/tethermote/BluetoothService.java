@@ -12,7 +12,7 @@ public class BluetoothService extends Service {
     public void onCreate() {
     }
 
-    public void startThread() {
+    private void startThread() {
         if (mainThread != null) {
             mainThread.cancel();
         }

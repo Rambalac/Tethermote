@@ -61,7 +61,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
     };
-    private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferecesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             new Thread(new Runnable() {
@@ -151,7 +151,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         registerReceiver(new StateReceiver(), stateFilter);
 
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(sharedPreferecesListener);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(sharedPreferencesListener);
 
         SwitchNotification.Check(this);
     }
@@ -209,7 +209,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return true;
             }
         };
-        private Preference.OnPreferenceChangeListener OnEnableTetheringPreferenceClickListener = new Preference.OnPreferenceChangeListener() {
+        private final Preference.OnPreferenceChangeListener OnEnableTetheringPreferenceClickListener = new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object val) {
                 Boolean value = (Boolean) val;
@@ -220,7 +220,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     act.getApplicationContext().startService(serviceIntent);
                     WirelessTools.checkWriteSettingsPermission(act);
 
-                    WirelessTools.checkPowerSave(act);
+                    //WirelessTools.checkPowerSave(act);
                 } else {
                     act.getApplicationContext().stopService(serviceIntent);
                 }

@@ -115,7 +115,7 @@ public class TetherRemoteWidget extends AppWidgetProvider {
         super.onReceive(context, intent);
     }
 
-    public void ShowSettings(Context context) {
+    private void ShowSettings(Context context) {
         Intent settingsIntent = new Intent(context, SettingsActivity.class);
         settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(settingsIntent);
