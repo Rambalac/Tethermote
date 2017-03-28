@@ -12,6 +12,10 @@ Play store link https://play.google.com/store/apps/details?id=com.azi.tethermote
 Windows 10
 ----------
 
-Application will be able to enable WiFi tethering via bluetooth on Android devices where similar application is installed.
+Application is able to enable WiFi tethering via bluetooth on Android devices where similar application is installed.
+
+Unfortunately Universal Winows Application API does not provide way to switch WiFi tethering. Only swithching on remote device is possble.
+
+MS Store link https://www.microsoft.com/store/apps/9NBLGGH4WFDC
 
 Repository for Windows version is here https://github.com/Rambalac/TethermoteWindows
